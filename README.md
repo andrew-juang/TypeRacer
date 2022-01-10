@@ -9,9 +9,9 @@ TypeRacer is a multiplayer typing test racing game. You have to type a text as f
 (maybe later)
 
 ### Typing interface
-(mockup of the interface)
+<img width="400" alt="c_typeracer_mockup" src="https://user-images.githubusercontent.com/43192121/148847406-95b9ef1b-d356-4044-ab8f-d57bddaf3302.png">
 
-The text to be typed will be displayed, likely in its entirety depending on total length. It will be in a light color and font to signify that it has not been typed yet. Typed characters are bolded, and incorrect characters are highlighted in red.
+The text to be typed will be displayed, likely in its entirety depending on total length. It will be in a darker color and font to signify that it has not been typed yet. Typed characters are lighter and bolded, and incorrect characters are highlighted in red.
 
 The instantaneous WPM (words per minute) and accuracy will be displayed.
 
