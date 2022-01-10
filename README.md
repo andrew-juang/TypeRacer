@@ -27,4 +27,8 @@ After accepting connections through sockets (TODO: expand), the server will gene
 TODO
 
 ## Timeline
-TODO
+## Timeline
+- [x] Proposal 1/12
+- [ ] stuff
+- [ ] more stuff
+- [ ] 
