@@ -33,7 +33,7 @@ TypeRacer is a multiplayer typing test racing game. You have to type a text as f
 - After startup, the server will bind to a port and being to listen for incoming connections. Upon acceptance of the connection, it will wait for a message from the client that will signify whether or not to create a new room (fork a subserver) or join an existing room (how?).
 
 #### Generating text
-- The server will generate the text to be typed by all players. It will send this to all clients. (how?)
+- The server will generate the text to be out of an array of pointers to possible text string to be typed by all players. It will send this to all clients. (how?)
 
 #### Relaying players' progress
 - Coming soon.
@@ -48,11 +48,11 @@ TypeRacer is a multiplayer typing test racing game. You have to type a text as f
 
 ### External Libraries
 - Ncurses
-``` 
-sudo apt get something 
+```
+sudo apt get something
 ```
 
-### Responsibilities 
+### Responsibilities
 - Aaron: Does stuff 
 - Andrew: Does stuff
 - Dylan: Does stuff
