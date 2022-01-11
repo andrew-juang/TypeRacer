@@ -40,11 +40,21 @@ TypeRacer is a multiplayer typing test racing game. You have to type a text as f
 
 
 ### Client side
-#### Connecting to the server
-- The client will first prompt for a IP address or hostname to connect to. It will connect to the server, and prompt the user to choose between creating a new room or joining an existing room. Whichever the option is, the client will send the appropriate message to the server.
+The client is responsible for connecting to the server, recieving the text to type, displaying text and other players' progress on the screen, recieving input, and sending progress messages to the server.
 
-#### Gameplay
-- Coming soon.
+#### Connecting to the server
+On execution the client will prompt the user for an IP address or hostname to connect to. The client will then connect to the server specified using a socket. On connection to the server, the client will recieve a message packet from the server containing the text to type. The client will display the text on the screen while the server waits for others to connect. As others connect to the server, the client will recieve notification of these other clients and show their username/progress on the screen (which will be 0% as the game hasn't started yet).
+
+#### Starting the race
+When the server sends a race start message packet, the client will display a countdown timer until the race starts.
+
+#### During the race
+During the race, the client will have to be able to respond to keyboard input as well as incoming messages relayed by the server. ncurses provides a function to get the next character `getch()`, which can be set to a non-blocking buffered mode. The socket used to connect to the server will also be set to non-blocking mode.
+
+During the game loop, the client will continuously check for keyboard input using `getch()`, and if recieved process the input and redraw the screen. It will then call `recv()` and if any data is recieved, process and redraw the screen.
+
+(more info later)
+
 
 ### External Libraries
 - ncurses
