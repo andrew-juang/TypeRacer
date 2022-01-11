@@ -1,5 +1,5 @@
 # ![TypeRacer](https://i.imgur.com/gUjuZST.gif)
-By Aaron Visser, Andrew Juang, and Dylan Hu | Systems Period 4
+Project Proposal by Aaron Visser, Andrew Juang, and Dylan Hu | Systems Period 4
 
 ## Description
 TypeRacer is a multiplayer typing test racing game. You have to type a text as fast as you can to try and beat others who are typing the same text.
