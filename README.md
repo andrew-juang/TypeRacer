@@ -61,7 +61,10 @@ sudo apt get something
 - ASLDKJfklsdjfl;ajkfaskjfas
 
 ## Timeline
-- [x] Proposal 1/12
-- [ ] stuff
-- [ ] more stuff
-- [ ] 
+- [x] Proposal (1/12)
+- [ ] Integrate client / server from past HW (1/13)
+- [ ] TypeRacer for single person (1/18)
+- [ ] Set up UI using ncurses (1/18)
+- [ ] Set up single room, multiple users (1/20)
+- [ ] Multiple rooms, multiple users (1/22)
+- [ ] Menus / GUI (Whatever remaining time we have)
