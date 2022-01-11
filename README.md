@@ -25,7 +25,7 @@ TypeRacer is a multiplayer typing test racing game. You have to type a text as f
 - Since network communication via TCP in C is a bit funky, we need a way to make sure that the data that we're sending over the network is completely transmitted and readable on the other side of the connection. We are sending more than just plain text over the network, so we need to be able to reliably tell the difference between many different types of messages.
 
 #### Protocol Details
-- Coming soon.
+Each packet starts with `-=-=-=-=-=-` and ends with `-+-+-+-+-+-`. The first byte after the beginning is the type of the packet.
 
 
 ### Server side
