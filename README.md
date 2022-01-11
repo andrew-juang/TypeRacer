@@ -1,4 +1,4 @@
-# TypeRacer
+# TypeRacer - Project Proposal
 By Aaron Visser, Andrew Juang, and Dylan Hu | Systems Period 4
 
 ## Description
