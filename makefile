@@ -9,6 +9,8 @@ CLIENT_OBJS := $(patsubst $(SRC)/client/%.c, $(OBJ)/client/%.o, $(CLIENT_SRCS))
 SERVER := $(BIN)/server
 CLIENT := $(BIN)/client
 
+LINKS = -lncurses
+
 all: SERVER CLIENT
 
 SERVER: $(SERVER_OBJS)
@@ -17,7 +19,7 @@ SERVER: $(SERVER_OBJS)
 
 CLIENT: $(CLIENT_OBJS)
 	mkdir -p $(BIN)
-	gcc -o $(CLIENT) $^
+	gcc -o $(CLIENT) $^ $(LINKS)
 
 $(OBJ)/server/%.o: $(SRC)/server/%.c
 	mkdir -p $(OBJ)/server
