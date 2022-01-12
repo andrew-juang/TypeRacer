@@ -11,21 +11,18 @@ TypeRacer is a multiplayer typing test racing game. You have to type a text as f
 ### Typing interface
 <img width="550" alt="Mockup of Typing Interface" src="https://user-images.githubusercontent.com/43192121/148847406-95b9ef1b-d356-4044-ab8f-d57bddaf3302.png">
 
-- The text to be typed will be displayed, likely in its entirety depending on total length. It will be in a darker color and font to signify that it has not been typed yet. Typed characters are lighter and bolded, and incorrect characters are highlighted in red.
+The text to be typed will be displayed, likely in its entirety depending on total length. It will be in a darker color and font to signify that it has not been typed yet. Typed characters are lighter and bolded, and incorrect characters are highlighted in red.
 
-- The instantaneous WPM (words per minute) and accuracy will be displayed.
-
-#### Coming soon??
-- The player will also be able to see the progress and speed of other players.
+The instantaneous WPM (words per minute) and accuracy will be displayed. The player will also be able to see the progress and WPM of other players.
 
 
 ## Technical Design
 ### Client-server communication protocol
 #### Rationale
-- Since network communication via TCP in C is a bit funky, we need a way to make sure that the data that we're sending over the network is completely transmitted and readable on the other side of the connection. We are sending more than just plain text over the network, so we need to be able to reliably tell the difference between many different types of messages.
+Since network communication via TCP in C is a bit funky, we need a way to make sure that the data that we're sending over the network is completely transmitted and readable on the other side of the connection. We are sending more than just plain text over the network, so we need to be able to reliably tell the difference between many different types of messages.
 
 #### Protocol Details
-Each packet starts with `-=-=-=-=-=-` and ends with `-+-+-+-+-+-`. The first byte after the beginning is the type of the packet. The rest of the packet is data. We will implement functions for every type of packet to send/recieve over a socket to be used in both the client and server. For packing `int`s and others into portable formats, we will probably use [the htons family of functions](https://linux.die.net/man/3/htons).
+Each packet starts with `-=-=-=-=-=-` and ends with `-+-+-+-+-+-`. The first byte after the beginning is the type of the packet. The rest of the packet is data. We will implement functions for every type of packet to send/recieve over a socket to be used in both the client and server. For packing `int`s and others into portable formats, we will probably use [the htons family of functions](https://linux.die.net/man/3/htons). Packets will be represented using structs to make our lives easier as we can pass them around easily.
 
 ##### Packet Types
 0. On connection username packet <br>  This packet is the first packet sent from connecting clients to the server. It contains the username that the client has chosen. The first two (2) bytes contain the length of the username (`unsigned int`). The rest contains the username.
