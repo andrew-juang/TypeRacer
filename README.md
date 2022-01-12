@@ -47,7 +47,7 @@ Upon acceptance of the connection, the server will wait for a message from the c
 The server will generate the text to be out of an array of pointers to possible text string to be typed by all players. It will send this to all clients. (how?)
 
 #### Relaying players' progress
-Coming soon.
+While the race is ongoing, the server will `poll()` all of the client's sockets. This uses an array of `struct pollfd`. If anything happens, the server will just go through all of the sockets and relay the message along.
 
 
 ### Client side
@@ -57,17 +57,19 @@ The client is responsible for connecting to the server, recieving the text to ty
 On execution the client will prompt the user for an IP address or hostname to connect to as well as a username for the player. The client will then connect to the server specified using a socket, then it will send a message packet to the server containing the username selected. On connection to the server, the client will recieve a message packet from the server containing the text to type and the usernames of the other players, if applicable. The client will display the text on the screen while the server waits for others to connect. As others connect to the server, the client will recieve notification of these other clients and show their username/progress on the screen (which will be 0% as the game hasn't started yet).
 
 #### Starting the race
-When the server sends a race start message packet, the client will display a countdown timer until the race starts.
+When the server sends a race start message packet, the client will display a countdown timer until the race starts. When the client recieves the race start message, it will move to the main race loop.
 
 #### During the race
 During the race, the client will have to be able to respond to keyboard input as well as incoming messages relayed by the server. ncurses provides a function to get the next character `getch()`, which can be set to a non-blocking buffered mode. The socket used to connect to the server will also be set to non-blocking mode.
 
-During the game loop, the client will continuously check for keyboard input using `getch()`, and if recieved process the input and redraw the screen. It will then call `recv()` and if any data is recieved, process and redraw the screen.
+During the game loop, the client will continuously check for keyboard input using `getch()`, and if recieved process the input and redraw the screen. It will then call `recv()` and if any data is recieved, process and redraw the screen. A sleep of a small amount will be used in order to not absolutely eat up all the CPU cycles.
 
-To write text on the screen, ncurses provides a bunch of print functions, most generally is `mvprintw()`, which accepts a position argument and the text to print. We can use this to print text into the terminal in arbitrary positions. ncurses also provides `attron()` and `attroff()` to change the styling of the text.
+To write text on the screen, ncurses provides a bunch of print functions, which can be used to print text into the terminal in arbitrary positions. ncurses also provides `attron()` and `attroff()` to change the styling of the text.
 
 #### Calculating errors and WPM
-(coming soon)
+Whenever a character is typed, the client will increment a total character counter. If the character typed is incorrect, a incorrect character counter will be incremented. WPM is basically something like: 
+
+![WPM formula](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D%20%5Cbg_white%20%5Cfrac%7B%5B(%5Cfrac%7B%5Ctext%7BCharacters%20Typed%7D%7D%7B5%7D)-%5Ctext%7BErrors%7D%5D%7D%7B%5Ctext%7BTime%7D%7D)
 
 #### Sending updates messages
 (coming soon)
