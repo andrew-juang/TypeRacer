@@ -48,7 +48,7 @@ While the race is ongoing, the server will `poll()` all of the client's sockets.
 
 
 ### Client side
-The client is responsible for connecting to the server, recieving the text to type, displaying text and other players' progress on the screen, recieving input, and sending progress messages to the server.
+The client is responsible for connecting to the server, recieving the text to type, displaying text and other players' progress on the screen, recieving input, and sending progress messages to the server. Keeping track of other players can be done with a linked list of structs, or just a regular array.
 
 #### Connecting to the server
 On execution the client will prompt the user for an IP address or hostname to connect to as well as a username for the player. The client will then connect to the server specified using a socket, then it will send a message packet to the server containing the username selected. On connection to the server, the client will recieve a message packet from the server containing the text to type and the usernames of the other players, if applicable. The client will display the text on the screen while the server waits for others to connect. As others connect to the server, the client will recieve notification of these other clients and show their username/progress on the screen (which will be 0% as the game hasn't started yet).
