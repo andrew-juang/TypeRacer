@@ -1,4 +1,9 @@
 Author: Dylan
+Date:   1/12/22 01:53 pm
+- Created function prototypes
+- Created struct TRPacket
+
+Author: Dylan
 Date:   1/12/22 10:50 am
 - Created folder and file structure for the network protocol
 - TODO: Need to change makefile to accomodate this
