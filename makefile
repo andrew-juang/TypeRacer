@@ -21,11 +21,11 @@ LINKS = -lncurses
 
 all: SERVER CLIENT
 
-SERVER: $(SERVER_OBJS)
+SERVER: $(SERVER_OBJS) $(PROTO_OBJS)
 	mkdir -p $(BIN)
 	gcc -o $(SERVER) $^
 
-CLIENT: $(CLIENT_OBJS)
+CLIENT: $(CLIENT_OBJS) $(PROTO_OBJS)
 	mkdir -p $(BIN)
 	gcc -o $(CLIENT) $^ $(LINKS)
 
