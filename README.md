@@ -25,18 +25,29 @@ TypeRacer is a multiplayer typing test racing game. You have to type a text as f
 - Since network communication via TCP in C is a bit funky, we need a way to make sure that the data that we're sending over the network is completely transmitted and readable on the other side of the connection. We are sending more than just plain text over the network, so we need to be able to reliably tell the difference between many different types of messages.
 
 #### Protocol Details
-Each packet starts with `-=-=-=-=-=-` and ends with `-+-+-+-+-+-`. The first byte after the beginning is the type of the packet.
+Each packet starts with `-=-=-=-=-=-` and ends with `-+-+-+-+-+-`. The first byte after the beginning is the type of the packet. The rest of the packet is data. We will implement functions for every type of packet to send/recieve over a socket to be used in both the client and server. For packing `int`s and others into portable formats, we will probably use [the htons family of functions](https://linux.die.net/man/3/htons).
+
+##### Packet Types
+0. On connection username packet <br>  This packet is the first packet sent from connecting clients to the server. It contains the username that the client has chosen. The first two (2) bytes contain the length of the username (`unsigned int`). The rest contains the username.
+2. New player joined packet <br>  This packet is sent to already connected clients when new clients join the server. It contains the username of the client that has joined. For new clients, if there are already joined clients, the server will just send a bunch of these to the new client.
+3. Typing text packet <br>  This packet contains the text that the clients will type. The first two (2) bytes contain the length of the text (`unsigned int`). The rest of the packet is the text.
+4. Race countdown start packet <br>  This packet signifies the start of a countdown until which the race will start. It contains the number of seconds until race start.
+5. Race start packet <br>  This packet signifies the start of the race (in case clients are delayed somehow). It contains no data.
+6. Progress packet <br>  This packet contains the username, percentage progress, and current WPM of the transmitting client. The first two (2) bytes contain the length of the username. Next is the username, and afterwards is two (2) bytes of the percentage progress, and finally two (2) bytes of the current WPM. All types are `unsigned int`s.
 
 
 ### Server side
 #### Accepting connections
-- After startup, the server will bind to a port and being to listen for incoming connections. Upon acceptance of the connection, it will wait for a message from the client that will signify whether or not to create a new room (fork a subserver) or join an existing room (how?).
+After startup, the server will bind to a port and being to listen for incoming connections. 
+
+##### Possible addition later
+Upon acceptance of the connection, the server will wait for a message from the client that will signify whether or not to create a new room (fork a subserver) or join an existing room (how?).
 
 #### Generating text
-- The server will generate the text to be out of an array of pointers to possible text string to be typed by all players. It will send this to all clients. (how?)
+The server will generate the text to be out of an array of pointers to possible text string to be typed by all players. It will send this to all clients. (how?)
 
 #### Relaying players' progress
-- Coming soon.
+Coming soon.
 
 
 ### Client side
@@ -65,7 +76,7 @@ To write text on the screen, ncurses provides a bunch of print functions, most g
 ### External Libraries
 - ncurses
   - On debian: `sudo apt install libncurses5-dev libncursesw5-dev`
-  - On other systems google: "install ncurses (platform)"
+  - On other systems google: "install ncurses (platform)" and follow instructions that look somewhat trustworthy
 
 ### Responsibilities
 - Aaron: Does stuff 
