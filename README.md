@@ -71,8 +71,8 @@ Whenever a character is typed, the client will increment a total character count
 
 ![WPM formula](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D%20%5Cbg_white%20%5Cfrac%7B%5B(%5Cfrac%7B%5Ctext%7BCharacters%20Typed%7D%7D%7B5%7D)-%5Ctext%7BErrors%7D%5D%7D%7B%5Ctext%7BTime%7D%7D)
 
-#### Sending updates messages
-(coming soon)
+#### Sending progress messages
+After every word (every time the user passes a white space in the original text), the client will send the most recent progress and WPM in a packet to the server.
 
 
 ### External Libraries
