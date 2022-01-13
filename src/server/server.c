@@ -1,13 +1,20 @@
 #include "server.h"
 
+static void sighandler(int signo);
+int sd;
+
 int main() {
+	signal(SIGINT, sighandler);
+
 	// Binds to a port and listens for incoming connections
-	int sd = server_setup();
+	sd = server_setup();
 
 	while (1) {
 		int to_client = server_connect(sd);
 		printf("[server] connected to client!\n");
 	}
+
+	return 0;
 }
 
 
@@ -44,4 +51,14 @@ int server_connect(int from_client) {
 	client_socket = accept(from_client, (struct sockaddr *) &client_address, &sock_size);
 
 	return client_socket;
+}
+
+static void sighandler(int signo) {
+  if (signo == SIGINT) {
+    printf("\n[server] SIGINT recieved, exiting!\n");
+
+    close(sd);
+    printf("\n");
+    exit(EXIT_SUCCESS);
+  }
 }
