@@ -1,4 +1,6 @@
 #include "client.h"
+#include "../trprotocol/trprotocol.h"
+
 
 int main() {
 
