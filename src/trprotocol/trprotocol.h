@@ -40,6 +40,7 @@ struct TRPacket {
 // Generic functions (wrapper for appropriate send/recv funcs)
 int send_packet(struct TRPacket *packet);
 struct TRPacket * recv_packet();
+void print_packet(struct TRPacket *packet);
 
 int send_usr_pkt(struct TRPacket *packet);
 struct TRPacket * recv_usr_pkt();
