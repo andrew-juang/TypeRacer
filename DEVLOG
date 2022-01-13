@@ -1,4 +1,8 @@
 Author: Dylan
+Date:   1/12/22 08:40 pm
+- Updated struct TRPacket prototype
+
+Author: Dylan
 Date:   1/12/22 01:53 pm
 - Created function prototypes
 - Created struct TRPacket
