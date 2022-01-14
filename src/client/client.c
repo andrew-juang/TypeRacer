@@ -3,8 +3,16 @@
 
 
 int main() {
+ 	char line[10];
 
-	client_connect();
+	int sd = client_connect();
+	printf("Start Game? [Y/N]: ");
+	fgets(line, 10, stdin);
+	int err = write(sd, line, sizeof(line)); // send data to server
+	if(err == -1) {
+		printf("unable to write to server");
+		return 0;
+	}
 
 	initscr();
 

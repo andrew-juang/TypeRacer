@@ -9,9 +9,20 @@ int main() {
 	// Binds to a port and listens for incoming connections
 	sd = server_setup();
 
+
 	while (1) {
 		int to_client = server_connect(sd);
 		printf("[server] connected to client!\n");
+		char start[10];
+		if (read(to_client, start, sizeof(start))==0) { // reads data from client
+			int err = close(to_client);
+			if(err == -1) {
+				printf("Unable to read from client");
+				return 0;
+			}
+			break;
+		}
+		printf("%s", start);
 	}
 
 	return 0;
