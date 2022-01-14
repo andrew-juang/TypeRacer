@@ -14,9 +14,12 @@ int main() {
 		return 0;
 	}
 
+    char text[4000];
+    read(sd, text, sizeof(text));
+
 	initscr();
 
-	printw("Hello world!");
+	printw("%s", text);
 	refresh();
 
 	getch();

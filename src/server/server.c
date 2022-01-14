@@ -14,15 +14,13 @@ int main() {
 		int to_client = server_connect(sd);
 		printf("[server] connected to client!\n");
 		char start[10];
-		if (read(to_client, start, sizeof(start))==0) { // reads data from client
-			int err = close(to_client);
-			if(err == -1) {
-				printf("Unable to read from client");
-				return 0;
-			}
-			break;
+		read(to_client, start, sizeof(start));
+
+		if (strcmp(start,"Y\n")==0) {
+			printf("%s", start);
+			char * text = generate_text();
+			write(to_client, text, sizeof(text));
 		}
-		printf("%s", start);
 	}
 
 	return 0;
@@ -87,4 +85,5 @@ char * generate_text(){
 	} else if(r == 3) {
 		text = "Maya hii Maya hoo Maya haaah Maya haaah haah Maya hoo Maya haah Maya haah haah Maya hiiMaya hoo Maya haah Maya haah haaah Maya hii Maya hoo Maya haah Maya haaah haaah Riiing ding ding ding ding Bum bum bum bum bum Ring ding ding ding ding ding Riiing ding ding ding ding Bum bum bum bum bum Freeschta pleeescthsa Nomaj nomaj nomaj eyy Nomaj nomaj nomaj yey Nomaj nomaj nomaj yey Keept korskavski Drackon steck an playz Mia mi prfeste Ohoooho kepreijj Leeaattss goo Ding ding ding ding ding ding ding ding Bum bum bum bum bum bum bum Ding ding ding ding ding ding ding ding ding ding Bum bum bum bum bum bum bum bum bum.";
 	}
+	return text;
 }
