@@ -8,14 +8,14 @@ int main() {
 	int sd = client_connect();
 	printf("Start Game? [Y/N]: ");
 	fgets(line, 10, stdin);
-	int err = write(sd, line, sizeof(line)); // send data to server
+	int err = send(sd, line, sizeof(line), 0); // send data to server
 	if(err == -1) {
 		printf("unable to write to server");
 		return 0;
 	}
 
-    char text[4000];
-    read(sd, text, sizeof(text));
+    char text[2000];
+    recv(sd, text, sizeof(text), 0);
 
 	initscr();
 
