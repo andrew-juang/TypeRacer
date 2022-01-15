@@ -4,11 +4,10 @@ static void sighandler(int signo);
 int sd;
 
 int main() {
-	signal(SIGINT, sighandler);
+	srand(time(NULL)); // Seed RNG
+	signal(SIGINT, sighandler); // Handle Signals
 
-	// Binds to a port and listens for incoming connections
-	sd = server_setup();
-
+	sd = server_setup(); // Binds to a port and listens for incoming connections
 
 	while (1) {
 		int to_client = server_connect(sd);
@@ -16,10 +15,12 @@ int main() {
 		char start[10];
 		recv(to_client, start, sizeof(start),0);
 
-		if (strcmp(start,"Y\n")==0) {
-			printf("%s", start);
+		if (strcmp(start,"Y\n")==0) { // Received Message to Start Game
 			char * text = generate_text();
-			send(to_client, text, 1024, 0);
+			send(to_client, text, 4032, 0);
+		} else if (strcmp(start,"N\n")==0) {
+			close(to_client);
+			break;
 		}
 	}
 

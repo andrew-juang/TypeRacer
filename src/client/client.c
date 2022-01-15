@@ -5,14 +5,11 @@
 int main() {
  	char line[10];
 
-	int sd = client_connect();
+	int sd = client_connect(); // Connect to Server
+
 	printf("Start Game? [Y/N]: ");
 	fgets(line, 10, stdin);
-	int err = send(sd, line, sizeof(line), 0); // send data to server
-	if(err == -1) {
-		printf("unable to write to server");
-		return 0;
-	}
+	send(sd, line, sizeof(line), 0); // send Y/N to server
 
     char text[2000];
     recv(sd, text, sizeof(text), 0);
