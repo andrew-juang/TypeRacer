@@ -19,11 +19,16 @@ int main() {
 		struct TRPacket *USERNAME = recv_usr_pkt(to_client);
 		print_packet(USERNAME);
 
-		// Receive packet to start (TO BE REPLACED)
+		// Receive packet to start
 		recv(to_client, start, sizeof(start),0);
+
 		if (strcmp(start,"Y\n")==0) { // Received Message to Start Game
 			char * text = generate_text();
-			send(to_client, text, 4032, 0);
+			struct TRPacket *TEXT = calloc(1, sizeof(struct TRPacket));
+			TEXT->type = 2;
+		    TEXT->text_length = strlen(text);
+		    TEXT->text = text;
+			send_typetext_pkt(to_client,TEXT);
 		} else if (strcmp(start,"N\n")==0) {
 			char * text = "N\n";
 			send(to_client, text, 4032, 0);

@@ -10,7 +10,7 @@ int main() {
     // Connect to Server
 	int sd = client_connect();
 
-    // Prompt USERNAMEkk
+    // Prompt USERNAME
     printf("Username: "); // Prompt
 	fgets(username, 1024, stdin); // Read from STDIN
     USERNAME->type = 0;
@@ -25,8 +25,7 @@ int main() {
 	send(sd, line, sizeof(line), 0); // send Y/N to server
 
     // Receive Text to be typed
-    char text[2000];
-    recv(sd, text, sizeof(text), 0);
+    struct TRPacket *TEXT = recv_typetext_pkt(sd);
 
     // Initialize Curses
 	initscr();
@@ -56,7 +55,7 @@ int main() {
     mvprintw(0, col-22, "WPM 65");
 
     attron(COLOR_PAIR(3));
-    mvprintw(2, 0, "%s", text);
+    mvprintw(2, 0, "%s", TEXT->text);
 
 	refresh();
 

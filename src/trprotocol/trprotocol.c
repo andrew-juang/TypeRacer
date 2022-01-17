@@ -68,7 +68,7 @@ int send_usr_pkt(int sockfd, struct TRPacket *packet) {
     uint16_t _data_size = htons(data_size);
     uint16_t _packet_type = htons(packet->type);
     uint16_t _packet_uname_length = htons(packet->uname_length);
-    
+
     memcpy(data, &_data_size, 2);                       // size of packet
     memcpy(data+2, &_packet_type, 2);                  // packet type
     memcpy(data+4, &_packet_uname_length, 2);          // length of username
@@ -84,7 +84,7 @@ int send_usr_pkt(int sockfd, struct TRPacket *packet) {
 /**
  * Recieves a packet of type 0. Allocates memory for packet
  * and returns a pointer to it.
- * 
+ *
  * @return pointer to recieved packet or NULL on error
  */
 struct TRPacket * recv_usr_pkt(int sockfd) {
@@ -124,15 +124,68 @@ int send_pjoined_pkt(int sockfd, struct TRPacket *packet) {
     return send_usr_pkt(sockfd, packet);
 }
 
-
 /**
  * Recieves a packet of type 1. Allocates memory for packet
  * and returns a pointer to it.
- * 
+ *
  * @return pointer to recieved packet
  */
 struct TRPacket * recv_pjoined_pkt(int sockfd) {
     return recv_usr_pkt(sockfd);
+}
+
+/**
+ * Recieves a packet of type 2. Allocates memory for packet
+ * and returns a pointer to it.
+ *
+ * @return pointer to recieved packet or NULL on error
+ */
+int send_typetext_pkt(int sockfd, struct TRPacket *packet) {
+    unsigned int data_size = 6 + packet->text_length;
+    uint8_t *data = malloc(data_size);
+
+    uint16_t _data_size = htons(data_size);
+    uint16_t _packet_type = htons(packet->type);
+    uint16_t _packet_text_length = htons(packet->text_length);
+
+    memcpy(data, &_data_size, 2);                       // size of packet
+    memcpy(data+2, &_packet_type, 2);                  // packet type
+    memcpy(data+4, &_packet_text_length, 2);          // length of text
+    memcpy(data+6, packet->text, packet->text_length);  // username
+
+    int sent = sendall(sockfd, data, &data_size);
+    free(data);
+
+    return sent;
+}
+
+/**
+ * Recieves a packet of type 2. Allocates memory for packet
+ * and returns a pointer to it.
+ *
+ * @return pointer to recieved packet
+ */
+struct TRPacket * recv_typetext_pkt(int sockfd) {
+    struct TRPacket *ret = calloc(1, sizeof(struct TRPacket));
+    unsigned int data_size = 6;  // could probably just be 2
+    uint8_t *data = calloc(1, data_size);
+
+    int _read = recv_n_bytes(sockfd, data, 2);  // read the size of the packet only
+    data_size = ntohs(*((uint16_t *) data));  // conversion magic
+
+    data = realloc(data, data_size);
+    _read = recv_n_bytes(sockfd, data+2, data_size-2);  // read the rest
+
+    unsigned int type = ntohs(*((uint16_t *) (data+2)));  // get the type
+
+    ret->type = type;
+    ret->text_length = ntohs(*((uint16_t *) (data+4)));  // get the size
+    ret->text = calloc(1, ret->uname_length);
+
+    memcpy(ret->text, data+6, ret->text_length);
+
+    free(data);
+    return ret;
 }
 
 
@@ -162,7 +215,7 @@ void print_packet(struct TRPacket *packet) {
         printf("puname_length=%d prog_username=%s progress=%d wpm=%d",
                 packet->puname_length, packet->prog_username, packet->progress, packet->wpm);
         break;
-    
+
     default:
         break;
     }

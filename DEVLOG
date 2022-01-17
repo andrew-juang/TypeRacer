@@ -1,4 +1,8 @@
 Author: Andrew
+Date:   Sun Jan 17 10:34:39 2022 -0500
+- Implemented send/recv function for packet type 2
+
+Author: Andrew
 Date:   Sun Jan 16 20:04:39 2022 -0500
 - Implemented game start confirmation
 - Began NCurses UI (TypeRacer logo, WPM, Accuracy)
