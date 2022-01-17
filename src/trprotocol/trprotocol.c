@@ -57,11 +57,18 @@ int recv_n_bytes(int sockfd, uint8_t *buf, int n) {
 
 
 /**
- * Sends a packet of type 0 through a socket
+ * Sends a packet of type 0 through a socket. Checks
+ * if packet type is correct before sending.
+ * 
  * @param sockfd socket descriptor
  * @param packet packet to send
+ * @return 0 on success, other values on failure
  */
 int send_usr_pkt(int sockfd, struct TRPacket *packet) {
+    if (packet->type != 0 && packet != 1) {  // wrong type
+        return -1;
+    }
+
     unsigned int data_size = 6 + packet->uname_length;
     uint8_t *data = malloc(data_size);
 
@@ -116,9 +123,12 @@ struct TRPacket * recv_usr_pkt(int sockfd) {
 
 
 /**
- * Sends a packet of type 1 through a socket
+ * Sends a packet of type 1 through a socket. Checks
+ * if packet type is correct before sending.
+ * 
  * @param sockfd socket descriptor
  * @param packet packet to send
+ * @return 0 on success, other values on failure
  */
 int send_pjoined_pkt(int sockfd, struct TRPacket *packet) {
     return send_usr_pkt(sockfd, packet);
@@ -137,12 +147,18 @@ struct TRPacket * recv_pjoined_pkt(int sockfd) {
 
 
 /**
- * Recieves a packet of type 2. Allocates memory for packet
- * and returns a pointer to it.
- *
- * @return pointer to recieved packet or NULL on error
+ * Sends a packet of type 2 through a socket. Checks
+ * if packet type is correct before sending.
+ * 
+ * @param sockfd socket descriptor
+ * @param packet packet to send
+ * @return 0 on success, other values on failure
  */
 int send_typetext_pkt(int sockfd, struct TRPacket *packet) {
+    if (packet->type != 2) {  // wrong type
+        return -1;
+    }
+
     unsigned int data_size = 6 + packet->text_length;
     uint8_t *data = malloc(data_size);
 
