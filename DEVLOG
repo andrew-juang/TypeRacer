@@ -1,3 +1,8 @@
+Author: Andrew
+Date:   Sun Jan 16 20:04:39 2022 -0500
+- Implemented game start confirmation
+- Began NCurses UI (TypeRacer logo, WPM, Accuracy)
+
 Author: Dylan
 Date:   1/12/22 08:40 pm
 - Updated struct TRPacket prototype
@@ -12,6 +17,6 @@ Date:   1/12/22 10:50 am
 - Created folder and file structure for the network protocol
 - TODO: Need to change makefile to accomodate this
 
-Author: Andrew <andrewjuang01@gmail.com>
+Author: Andrew
 Date:   Tue Jan 11 22:46:01 2022 -0500
 - Set up makefile and repository structure
