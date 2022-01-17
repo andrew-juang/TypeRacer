@@ -65,7 +65,7 @@ int recv_n_bytes(int sockfd, uint8_t *buf, int n) {
  * @return 0 on success, other values on failure
  */
 int send_usr_pkt(int sockfd, struct TRPacket *packet) {
-    if (packet->type != 0 && packet != 1) {  // wrong type
+    if (packet->type != 0 && packet->type != 1) {  // wrong type
         return -1;
     }
 
@@ -84,7 +84,7 @@ int send_usr_pkt(int sockfd, struct TRPacket *packet) {
     int sent = sendall(sockfd, data, &data_size);
     free(data);
 
-    return sent;
+    return 0;
 }
 
 
@@ -167,14 +167,14 @@ int send_typetext_pkt(int sockfd, struct TRPacket *packet) {
     uint16_t _packet_text_length = htons(packet->text_length);
 
     memcpy(data, &_data_size, 2);                       // size of packet
-    memcpy(data+2, &_packet_type, 2);                  // packet type
-    memcpy(data+4, &_packet_text_length, 2);          // length of text
+    memcpy(data+2, &_packet_type, 2);                   // packet type
+    memcpy(data+4, &_packet_text_length, 2);            // length of text
     memcpy(data+6, packet->text, packet->text_length);  // the text
 
     int sent = sendall(sockfd, data, &data_size);
     free(data);
 
-    return sent;
+    return 0;
 }
 
 
@@ -206,6 +206,126 @@ struct TRPacket * recv_typetext_pkt(int sockfd) {
     ret->text = calloc(1, ret->text_length);
 
     memcpy(ret->text, data+6, ret->text_length);  // copy the text
+
+    free(data);
+    return ret;
+}
+
+
+/**
+ * Sends a packet of type 3 through a socket. Checks
+ * if packet type is correct before sending.
+ * 
+ * @param sockfd socket descriptor
+ * @param packet packet to send
+ * @return 0 on success, other values on failure
+ */
+int send_cntdwn_pkt(int sockfd, struct TRPacket *packet) {
+    if (packet->type != 3) {  // wrong type
+        return -1;
+    }
+
+    unsigned int data_size = 6;
+    uint8_t *data = malloc(data_size);
+
+    uint16_t _data_size = htons(data_size);
+    uint16_t _packet_type = htons(packet->type);
+    uint16_t _countdown = htons(packet->countdown);
+
+    memcpy(data, &_data_size, 2);       // size of packet
+    memcpy(data+2, &_packet_type, 2);   // packet type
+    memcpy(data+4, &_countdown, 2);     // countdown timer
+
+    int sent = sendall(sockfd, data, &data_size);
+    free(data);
+
+    return 0;
+}
+
+
+/**
+ * Recieves a packet of type 3. Allocates memory for packet
+ * and returns a pointer to it.
+ *
+ * @return pointer to recieved packet
+ */
+struct TRPacket * recv_cntdwn_pkt(int sockfd) {
+    struct TRPacket *ret = calloc(1, sizeof(struct TRPacket));
+    unsigned int data_size = 2;
+    uint8_t *data = calloc(1, data_size);
+
+    int _read = recv_n_bytes(sockfd, data, 2);  // read the size of the packet only
+    data_size = ntohs(*((uint16_t *) data));  // conversion magic
+
+    data = realloc(data, data_size);
+    _read = recv_n_bytes(sockfd, data+2, data_size-2);  // read the rest
+
+    unsigned int type = ntohs(*((uint16_t *) (data+2)));  // get the type
+    if (type != 3) {  // wrong type
+        free(data);
+        return NULL;
+    }
+
+    ret->type = type;
+    ret->countdown = ntohs(*((uint16_t *) (data+4)));  // get the countdown time
+
+    free(data);
+    return ret;
+}
+
+
+/**
+ * Sends a packet of type 4 through a socket. Checks
+ * if packet type is correct before sending.
+ * 
+ * @param sockfd socket descriptor
+ * @param packet packet to send
+ * @return 0 on success, other values on failure
+ */
+int send_rstart_pkt(int sockfd, struct TRPacket *packet) {
+    if (packet->type != 4) {  // wrong type
+        return -1;
+    }
+
+    unsigned int data_size = 4;
+    uint8_t *data = malloc(data_size);
+
+    uint16_t _data_size = htons(data_size);
+    uint16_t _packet_type = htons(packet->type);
+
+    memcpy(data, &_data_size, 2);
+    memcpy(data+2, &_packet_type, 2);
+
+    int sent = sendall(sockfd, data, &data_size);
+
+    return 0;
+}
+
+
+/**
+ * Recieves a packet of type 4. Allocates memory for packet
+ * and returns a pointer to it.
+ *
+ * @return pointer to recieved packet
+ */
+struct TRPacket * recv_rstart_pkt(int sockfd) {
+    struct TRPacket *ret = calloc(1, sizeof(struct TRPacket));
+    unsigned int data_size = 2;
+    uint8_t *data = calloc(1, data_size);
+
+    int _read = recv_n_bytes(sockfd, data, 2);
+    data_size = ntohs(*((uint16_t *) data));  // conversion magic
+
+    data = realloc(data, data_size);
+    _read = recv_n_bytes(sockfd, data+2, data_size-2);  // read the rest
+
+    unsigned int type = ntohs(*((uint16_t *) (data+2)));  // get the type
+    if (type != 4) {  // wrong type
+        free(data);
+        return NULL;
+    }
+
+    ret->type = type;
 
     free(data);
     return ret;
