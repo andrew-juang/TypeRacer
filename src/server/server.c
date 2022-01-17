@@ -1,4 +1,5 @@
 #include "server.h"
+#include "../trprotocol/trprotocol.h"
 
 static void sighandler(int signo);
 int sd;
@@ -13,8 +14,13 @@ int main() {
 		int to_client = server_connect(sd);
 		printf("[server] connected to client!\n");
 		char start[10];
-		recv(to_client, start, sizeof(start),0);
 
+		// Receive USERNAME Packet
+		struct TRPacket *USERNAME = recv_usr_pkt(to_client);
+		print_packet(USERNAME);
+
+		// Receive packet to start (TO BE REPLACED)
+		recv(to_client, start, sizeof(start),0);
 		if (strcmp(start,"Y\n")==0) { // Received Message to Start Game
 			char * text = generate_text();
 			send(to_client, text, 4032, 0);

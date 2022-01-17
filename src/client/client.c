@@ -4,9 +4,19 @@
 
 int main() {
  	char line[10];
+    char username[1024];
+    struct TRPacket *USERNAME = calloc(1, sizeof(struct TRPacket));
 
     // Connect to Server
 	int sd = client_connect();
+
+    // Prompt USERNAMEkk
+    printf("Username: "); // Prompt
+	fgets(username, 1024, stdin); // Read from STDIN
+    USERNAME->type = 0;
+    USERNAME->uname_length = strlen(username);
+    USERNAME->username = username;
+    send_usr_pkt(sd, USERNAME);
 
     // Prompt Start of Game
     printf("Start Game? [Y/N]: "); // Prompt
@@ -50,7 +60,7 @@ int main() {
 
 	refresh();
 
-    
+
 
 
 	getch();
