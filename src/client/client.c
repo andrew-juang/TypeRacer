@@ -5,19 +5,53 @@
 int main() {
  	char line[10];
 
-	int sd = client_connect(); // Connect to Server
+    // Connect to Server
+	int sd = client_connect();
 
-	printf("Start Game? [Y/N]: ");
-	fgets(line, 10, stdin);
+    // Prompt Start of Game
+    printf("Start Game? [Y/N]: "); // Prompt
+	fgets(line, 10, stdin); // Read from STDIN
+    if (strcmp(line,"N\n")==0 || strcmp(line,"Y\n")!=0) return 0; // If, end client
 	send(sd, line, sizeof(line), 0); // send Y/N to server
 
+    // Receive Text to be typed
     char text[2000];
     recv(sd, text, sizeof(text), 0);
 
+    // Initialize Curses
 	initscr();
+    noecho();
+    curs_set(FALSE);
 
-	printw("%s", text);
+    // Initialize Colors
+    if (has_colors() == FALSE) {
+        endwin();
+        printf("Your terminal does not support color\n");
+        exit(1);
+    }
+    start_color();
+    init_pair(1, COLOR_RED, COLOR_BLACK);
+    init_pair(2, COLOR_BLUE, COLOR_BLACK);
+    init_pair(3, COLOR_WHITE, COLOR_BLACK);
+
+    // Set up screen
+    int row, col;
+    getmaxyx(stdscr, row, col);
+
+    attron(COLOR_PAIR(1));
+	mvprintw(0, 0, "TypeRacer");
+
+    attron(COLOR_PAIR(2));
+    mvprintw(0, col-12, "Accuracy: 85");
+    mvprintw(0, col-22, "WPM 65");
+
+    attron(COLOR_PAIR(3));
+    mvprintw(2, 0, "%s", text);
+
 	refresh();
+
+    
+
 
 	getch();
 	endwin();

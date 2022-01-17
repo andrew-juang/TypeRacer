@@ -19,8 +19,8 @@ int main() {
 			char * text = generate_text();
 			send(to_client, text, 4032, 0);
 		} else if (strcmp(start,"N\n")==0) {
-			close(to_client);
-			break;
+			char * text = "N\n";
+			send(to_client, text, 4032, 0);
 		}
 	}
 
