@@ -4,6 +4,11 @@ Date:   Sun Jan 16 20:04:39 2022 -0500
 - Began NCurses UI (TypeRacer logo, WPM, Accuracy)
 
 Author: Dylan
+Date:   1/13/22 02:03 pm
+ - Implemented send/recv functions for packet types 0, 1
+ - Implemented helper functions for sending/recieving of packets
+
+Author: Dylan
 Date:   1/12/22 08:40 pm
 - Updated struct TRPacket prototype
 
