@@ -1,3 +1,10 @@
+Author: Dylan
+Date:   1/17/22 05:21 pm
+ - Finished implemented send/recv functions for packet types 3, 4, 5
+ - Improved function documentation in trprotocol.c
+ - Sending now checks packet type before proceeding (all types)
+ - Sending types 0, 1, 2 now return 0 on success, in line with function descriptions
+
 Author: Andrew
 Date:   Sun Jan 17 10:34:39 2022 -0500
 - Implemented send/recv function for packet type 2
