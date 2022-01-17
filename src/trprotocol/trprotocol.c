@@ -108,7 +108,7 @@ struct TRPacket * recv_usr_pkt(int sockfd) {
     ret->uname_length = ntohs(*((uint16_t *) (data+4)));  // get the size
     ret->username = calloc(1, ret->uname_length);
 
-    memcpy(ret->username, data+6, ret->uname_length);
+    memcpy(ret->username, data+6, ret->uname_length);  // copy the username
 
     free(data);
     return ret;
@@ -124,6 +124,7 @@ int send_pjoined_pkt(int sockfd, struct TRPacket *packet) {
     return send_usr_pkt(sockfd, packet);
 }
 
+
 /**
  * Recieves a packet of type 1. Allocates memory for packet
  * and returns a pointer to it.
@@ -133,6 +134,7 @@ int send_pjoined_pkt(int sockfd, struct TRPacket *packet) {
 struct TRPacket * recv_pjoined_pkt(int sockfd) {
     return recv_usr_pkt(sockfd);
 }
+
 
 /**
  * Recieves a packet of type 2. Allocates memory for packet
@@ -151,13 +153,14 @@ int send_typetext_pkt(int sockfd, struct TRPacket *packet) {
     memcpy(data, &_data_size, 2);                       // size of packet
     memcpy(data+2, &_packet_type, 2);                  // packet type
     memcpy(data+4, &_packet_text_length, 2);          // length of text
-    memcpy(data+6, packet->text, packet->text_length);  // username
+    memcpy(data+6, packet->text, packet->text_length);  // the text
 
     int sent = sendall(sockfd, data, &data_size);
     free(data);
 
     return sent;
 }
+
 
 /**
  * Recieves a packet of type 2. Allocates memory for packet
@@ -177,12 +180,16 @@ struct TRPacket * recv_typetext_pkt(int sockfd) {
     _read = recv_n_bytes(sockfd, data+2, data_size-2);  // read the rest
 
     unsigned int type = ntohs(*((uint16_t *) (data+2)));  // get the type
+    if (type != 2) {  // wrong type
+        free(data);
+        return NULL;
+    }
 
     ret->type = type;
     ret->text_length = ntohs(*((uint16_t *) (data+4)));  // get the size
-    ret->text = calloc(1, ret->uname_length);
+    ret->text = calloc(1, ret->text_length);
 
-    memcpy(ret->text, data+6, ret->text_length);
+    memcpy(ret->text, data+6, ret->text_length);  // copy the text
 
     free(data);
     return ret;
@@ -222,6 +229,7 @@ void print_packet(struct TRPacket *packet) {
 
     printf("\n");
 }
+
 
 #if 0
 /**
