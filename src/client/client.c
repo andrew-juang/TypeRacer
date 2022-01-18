@@ -26,6 +26,8 @@ int main() {
     }
 
 	int sd = client_connect(hostname, port);
+    free(hostname);
+    free(port);
 
     // Prompt USERNAME
     printf("Username: "); // Prompt
