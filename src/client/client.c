@@ -7,8 +7,25 @@ int main() {
     char username[1024];
     struct TRPacket *USERNAME = calloc(1, sizeof(struct TRPacket));
 
-    // Connect to Server
-	int sd = client_connect();
+    printf("Welcome to TypeRacer!\n\n");
+    
+    printf("Hostname (leave blank for localhost): ");
+    char *hostname = calloc(6, sizeof(char));  // see https://stackoverflow.com/questions/8724954/what-is-the-maximum-number-of-characters-for-a-host-name-in-unix
+    fgets(hostname, 256, stdin);
+    *strrchr(hostname, '\n') = 0;
+    if (strlen(hostname) == 0) {
+        memcpy(hostname, "localhost", 10);
+    }
+
+    printf("Port (leave blank for default): ");
+    char *port = calloc(6, sizeof(char));
+    fgets(port, 6, stdin);
+    *strrchr(port, '\n') = 0;
+    if (strlen(port) == 0) {
+        memcpy(port, "9001", 5);
+    }
+
+	int sd = client_connect(hostname, port);
 
     // Prompt USERNAME
     printf("Username: "); // Prompt
@@ -68,7 +85,7 @@ int main() {
 	return 0;
 }
 
-int client_connect() {
+int client_connect(char *host, char *port) {
 	struct addrinfo *hints, *results;
 
 	hints = calloc(1,sizeof(struct addrinfo));
@@ -76,7 +93,7 @@ int client_connect() {
 	hints->ai_socktype = SOCK_STREAM;
 	hints->ai_flags = AI_PASSIVE;
 
-	getaddrinfo("localhost", "9001", hints, &results);
+	getaddrinfo(host, port, hints, &results);
 
 	//create socket
 	int sd = socket(results->ai_family, results->ai_socktype, results->ai_protocol);

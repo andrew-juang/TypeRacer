@@ -15,6 +15,6 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-int client_connect();
+int client_connect(char *host, char *port);
 
 #endif
