@@ -5,19 +5,10 @@
 int main() {
     int sd = do_connect();  // Client connection
 
-    char line[10];
-    char username[1024];
-    struct TRPacket *USERNAME = calloc(1, sizeof(struct TRPacket));
-
-    // Prompt USERNAME
-    printf("Username: "); // Prompt
-	fgets(username, 1024, stdin); // Read from STDIN
-    USERNAME->type = 0;
-    USERNAME->uname_length = strlen(username);
-    USERNAME->username = username;
-    send_usr_pkt(sd, USERNAME);
+    get_send_usrname(sd);  // Username prompt and processing
 
     // Prompt Start of Game
+    char line[10];
     printf("Start Game? [Y/N]: "); // Prompt
 	fgets(line, 10, stdin); // Read from STDIN
     if (strcmp(line,"N\n")==0 || strcmp(line,"Y\n")!=0) return 0; // If, end client
@@ -65,6 +56,21 @@ int main() {
 	endwin();
 
 	return 0;
+}
+
+void get_send_usrname(int sockfd) {
+    char username[1024];
+    struct TRPacket *USERNAME = calloc(1, sizeof(struct TRPacket));
+
+    // Prompt USERNAME
+    printf("Username: "); // Prompt
+	fgets(username, 1024, stdin); // Read from STDIN
+    USERNAME->type = 0;
+    USERNAME->uname_length = strlen(username);
+    USERNAME->username = username;
+    send_usr_pkt(sockfd, USERNAME);
+
+    free(USERNAME);
 }
 
 int do_connect() {
