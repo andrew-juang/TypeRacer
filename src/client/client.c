@@ -60,17 +60,17 @@ int main() {
 
 void get_send_usrname(int sockfd) {
     char username[1024];
-    struct TRPacket *USERNAME = calloc(1, sizeof(struct TRPacket));
+    struct TRPacket *uname_pkt = calloc(1, sizeof(struct TRPacket));
 
     // Prompt USERNAME
     printf("Username: "); // Prompt
 	fgets(username, 1024, stdin); // Read from STDIN
-    USERNAME->type = 0;
-    USERNAME->uname_length = strlen(username);
-    USERNAME->username = username;
-    send_usr_pkt(sockfd, USERNAME);
+    uname_pkt->type = 0;
+    uname_pkt->uname_length = strlen(username);
+    uname_pkt->username = username;
+    send_usr_pkt(sockfd, uname_pkt);
 
-    free(USERNAME);
+    free(uname_pkt);
 }
 
 int do_connect() {
