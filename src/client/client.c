@@ -3,31 +3,11 @@
 
 
 int main() {
- 	char line[10];
+    int sd = do_connect();  // Client connection
+
+    char line[10];
     char username[1024];
     struct TRPacket *USERNAME = calloc(1, sizeof(struct TRPacket));
-
-    printf("Welcome to TypeRacer!\n\n");
-    
-    printf("Hostname (leave blank for localhost): ");
-    char *hostname = calloc(6, sizeof(char));  // see https://stackoverflow.com/questions/8724954/what-is-the-maximum-number-of-characters-for-a-host-name-in-unix
-    fgets(hostname, 256, stdin);
-    *strrchr(hostname, '\n') = 0;
-    if (strlen(hostname) == 0) {
-        memcpy(hostname, "localhost", 10);
-    }
-
-    printf("Port (leave blank for default): ");
-    char *port = calloc(6, sizeof(char));
-    fgets(port, 6, stdin);
-    *strrchr(port, '\n') = 0;
-    if (strlen(port) == 0) {
-        memcpy(port, "9001", 5);
-    }
-
-	int sd = client_connect(hostname, port);
-    free(hostname);
-    free(port);
 
     // Prompt USERNAME
     printf("Username: "); // Prompt
@@ -85,6 +65,32 @@ int main() {
 	endwin();
 
 	return 0;
+}
+
+int do_connect() {
+    printf("Welcome to TypeRacer!\n\n");
+    
+    printf("Hostname (leave blank for localhost): ");
+    char *hostname = calloc(6, sizeof(char));  // see https://stackoverflow.com/questions/8724954/what-is-the-maximum-number-of-characters-for-a-host-name-in-unix
+    fgets(hostname, 256, stdin);
+    *strrchr(hostname, '\n') = 0;
+    if (strlen(hostname) == 0) {
+        memcpy(hostname, "localhost", 10);
+    }
+
+    printf("Port (leave blank for default): ");
+    char *port = calloc(6, sizeof(char));
+    fgets(port, 6, stdin);
+    *strrchr(port, '\n') = 0;
+    if (strlen(port) == 0) {
+        memcpy(port, "9001", 5);
+    }
+
+	int sd = client_connect(hostname, port);
+    free(hostname);
+    free(port);
+
+    return sd;
 }
 
 int client_connect(char *host, char *port) {
