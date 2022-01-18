@@ -16,7 +16,7 @@
 #define CLIENT_H
 
 int do_connect();
-void get_send_usrname(int sockfd);
+char * get_send_usrname(int sockfd);
 int client_connect(char *host, char *port);
 
 #endif

@@ -5,7 +5,7 @@
 int main() {
     int sd = do_connect();  // Client connection
 
-    get_send_usrname(sd);  // Username prompt and processing
+    char *username = get_send_usrname(sd);  // Username prompt and processing
 
     // Prompt Start of Game
     char line[10];
@@ -19,8 +19,9 @@ int main() {
 
     // Initialize Curses
 	initscr();
-    noecho();
-    curs_set(FALSE);
+    noecho();  // don't echo typed characters
+    curs_set(FALSE);  // no cursor
+    // nodelay(stdscr, TRUE);  // non-blocking getch
 
     // Initialize Colors
     if (has_colors() == FALSE) {
@@ -38,14 +39,17 @@ int main() {
     getmaxyx(stdscr, row, col);
 
     attron(COLOR_PAIR(1));
-	mvprintw(0, 0, "TypeRacer");
+	mvprintw(0, 2, "TypeRacer");
 
     attron(COLOR_PAIR(2));
     mvprintw(0, col-12, "Accuracy: 85");
     mvprintw(0, col-22, "WPM 65");
 
     attron(COLOR_PAIR(3));
-    mvprintw(2, 0, "%s", TEXT->text);
+    mvprintw(3, 2, "%s", TEXT->text);
+
+    attron(COLOR_PAIR(3));
+    mvprintw(row-2, 2, "%s", username);
 
 	refresh();
 
@@ -55,11 +59,13 @@ int main() {
 	getch();
 	endwin();
 
+    free(username);
+
 	return 0;
 }
 
-void get_send_usrname(int sockfd) {
-    char username[1024];
+char * get_send_usrname(int sockfd) {
+    char *username = calloc(1024, sizeof(char));
     struct TRPacket *uname_pkt = calloc(1, sizeof(struct TRPacket));
 
     // Prompt USERNAME
@@ -71,6 +77,8 @@ void get_send_usrname(int sockfd) {
     send_usr_pkt(sockfd, uname_pkt);
 
     free(uname_pkt);
+
+    return username;
 }
 
 int do_connect() {
