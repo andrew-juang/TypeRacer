@@ -7,32 +7,10 @@ int main() {
 
     char *username = get_send_usrname(sd);  // Username prompt and processing
 
-    // Prompt Start of Game
-    char line[10];
-    printf("Start Game? [Y/N]: "); // Prompt
-	fgets(line, 10, stdin); // Read from STDIN
-    if (strcmp(line,"N\n")==0 || strcmp(line,"Y\n")!=0) return 0; // If, end client
-	send(sd, line, sizeof(line), 0); // send Y/N to server
+    struct TRPacket *TEXT = recv_typetext_pkt(sd);  // Receive Text to be typed
 
-    // Receive Text to be typed
-    struct TRPacket *TEXT = recv_typetext_pkt(sd);
-
-    // Initialize Curses
-	initscr();
-    noecho();  // don't echo typed characters
-    curs_set(FALSE);  // no cursor
-    // nodelay(stdscr, TRUE);  // non-blocking getch
-
-    // Initialize Colors
-    if (has_colors() == FALSE) {
-        endwin();
-        printf("Your terminal does not support color\n");
-        exit(1);
-    }
-    start_color();
-    init_pair(1, COLOR_RED, COLOR_BLACK);
-    init_pair(2, COLOR_BLUE, COLOR_BLACK);
-    init_pair(3, COLOR_WHITE, COLOR_BLACK);
+    setup_curses();
+    draw_pregame();
 
     // Set up screen
     int row, col;
@@ -130,4 +108,27 @@ int client_connect(char *host, char *port) {
 	freeaddrinfo(results);
 
 	return sd;
+}
+
+void setup_curses() {
+    // Initialize Curses
+	initscr();
+    noecho();  // don't echo typed characters
+    curs_set(FALSE);  // no cursor
+    // nodelay(stdscr, TRUE);  // non-blocking getch
+
+    // Initialize Colors
+    if (has_colors() == FALSE) {
+        endwin();
+        printf("Your terminal does not support color\n");
+        exit(1);
+    }
+    start_color();
+    init_pair(1, COLOR_RED, COLOR_BLACK);
+    init_pair(2, COLOR_BLUE, COLOR_BLACK);
+    init_pair(3, COLOR_WHITE, COLOR_BLACK);
+}
+
+void draw_pregame() {
+    ;
 }

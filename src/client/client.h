@@ -18,5 +18,7 @@
 int do_connect();
 char * get_send_usrname(int sockfd);
 int client_connect(char *host, char *port);
+void setup_curses();
+void draw_pregame();
 
 #endif
