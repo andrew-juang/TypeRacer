@@ -27,9 +27,22 @@ int main() {
 	// connect the host and add it to pollfd array
 	int to_client = server_connect(sd);
 	printf("[server] connected to host!\n");
+
 	fds[1].fd = to_client;
 	fds[1].events = POLLIN;
 	num_users++;
+
+	// Tell the host that they're host
+	struct TRPacket *host_pkt = calloc(1, sizeof(struct TRPacket));
+	host_pkt->type = 6;
+	host_pkt->host = 1;
+	send_urhost_pkt(to_client, host_pkt);
+	free(host_pkt);
+
+	// Create a packet to tell non-host clients that they're not
+	struct TRPacket *not_host = calloc(1, sizeof(struct TRPacket));
+	not_host->type = 6;
+	not_host->host = 0;
 
 	while (1) {
 		int num_avail = poll(fds, num_users, -1);  // poll forever
@@ -54,10 +67,11 @@ int main() {
 				fds[num_users].events = POLLIN;
 
 				// Receive Username Packet
-				struct TRPacket *USERNAME = recv_usr_pkt(to_client);
-				print_packet(USERNAME);
+				struct TRPacket *_username = recv_usr_pkt(to_client);
+				print_packet(_username);
 
-				send_typetext_pkt(to_client,text_packet);  // Sends Typetext Packet
+				send_typetext_pkt(fds[i].fd, text_packet);  // Sends Typetext Packet
+				send_urhost_pkt(fds[i].fd, not_host);  // they're not host
 
 				int j;
 				for (j = 1; j < num_users; j++) {
@@ -71,9 +85,6 @@ int main() {
 
 				struct TRPacket *rstart = recv_rstart_pkt(fds[i].fd);
 				done++;
-
-				// for loop to send_rstart_pkt to all users
-
 				break;
 			}
 		}
@@ -85,6 +96,7 @@ int main() {
 	fds[0].fd = -1 * sd;  // stop polling listener socket
 	free(text);
 	free(text_packet);
+	free(not_host);
 
 	// While Loop to handle the game phase
 	while (1) {
