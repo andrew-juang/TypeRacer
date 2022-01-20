@@ -51,8 +51,8 @@ int main() {
 				char * text = generate_text();
 				struct TRPacket *TEXT = calloc(1, sizeof(struct TRPacket));
 				TEXT->type = 2;
-			    TEXT->text_length = strlen(text);
-			    TEXT->text = text;
+				TEXT->text_length = strlen(text);
+				TEXT->text = text;
 				send_typetext_pkt(to_client,TEXT);
 				// handle new connection
 				// get username

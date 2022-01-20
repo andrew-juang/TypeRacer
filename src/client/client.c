@@ -17,7 +17,7 @@ int main() {
     getmaxyx(stdscr, row, col);
 
     attron(COLOR_PAIR(1));
-	mvprintw(0, 2, "TypeRacer");
+    mvprintw(0, 2, "TypeRacer");
 
     attron(COLOR_PAIR(2));
     mvprintw(0, col-12, "Accuracy: 85");
@@ -29,17 +29,17 @@ int main() {
     attron(COLOR_PAIR(3));
     mvprintw(row-2, 2, "%s", username);
 
-	refresh();
+    refresh();
 
 
 
 
-	getch();
-	endwin();
+    getch();
+    endwin();
 
     free(username);
 
-	return 0;
+    return 0;
 }
 
 char * get_send_usrname(int sockfd) {
@@ -48,7 +48,7 @@ char * get_send_usrname(int sockfd) {
 
     // Prompt USERNAME
     printf("Username: "); // Prompt
-	fgets(username, 1024, stdin); // Read from STDIN
+    fgets(username, 1024, stdin); // Read from STDIN
     uname_pkt->type = 0;
     uname_pkt->uname_length = strlen(username);
     uname_pkt->username = username;
@@ -78,7 +78,7 @@ int do_connect() {
         memcpy(port, "9001", 5);
     }
 
-	int sd = client_connect(hostname, port);
+    int sd = client_connect(hostname, port);
     free(hostname);
     free(port);
 
@@ -86,33 +86,33 @@ int do_connect() {
 }
 
 int client_connect(char *host, char *port) {
-	struct addrinfo *hints, *results;
+    struct addrinfo *hints, *results;
 
-	hints = calloc(1,sizeof(struct addrinfo));
-	hints->ai_family = AF_INET;
-	hints->ai_socktype = SOCK_STREAM;
-	hints->ai_flags = AI_PASSIVE;
+    hints = calloc(1,sizeof(struct addrinfo));
+    hints->ai_family = AF_INET;
+    hints->ai_socktype = SOCK_STREAM;
+    hints->ai_flags = AI_PASSIVE;
 
-	getaddrinfo(host, port, hints, &results);
+    getaddrinfo(host, port, hints, &results);
 
-	//create socket
-	int sd = socket(results->ai_family, results->ai_socktype, results->ai_protocol);
+    //create socket
+    int sd = socket(results->ai_family, results->ai_socktype, results->ai_protocol);
 
-	int conn = connect(sd, results->ai_addr, results->ai_addrlen);
-	if (conn) {
-		printf("[client] couldn't connect\n");
-		exit(EXIT_FAILURE);
-	}
+    int conn = connect(sd, results->ai_addr, results->ai_addrlen);
+    if (conn) {
+        printf("[client] couldn't connect\n");
+        exit(EXIT_FAILURE);
+    }
 
-	free(hints);
-	freeaddrinfo(results);
+    free(hints);
+    freeaddrinfo(results);
 
-	return sd;
+    return sd;
 }
 
 void setup_curses() {
     // Initialize Curses
-	initscr();
+    initscr();
     noecho();  // don't echo typed characters
     curs_set(FALSE);  // no cursor
     // nodelay(stdscr, TRUE);  // non-blocking getch
