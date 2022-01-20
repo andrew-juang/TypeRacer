@@ -15,6 +15,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include <sys/poll.h>
 
 int server_setup();
 int server_connect(int from_client);

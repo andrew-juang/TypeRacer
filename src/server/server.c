@@ -10,29 +10,98 @@ int main() {
 
 	sd = server_setup(); // Binds to a port and listens for incoming connections
 
+	struct pollfd *fds = calloc(20, sizeof(struct pollfd));
+	int num_users = 0;
+
+	// add the listener socket to the pollfd array
+	fds[0].fd = sd;
+	fds[0].events = POLLIN;
+
+	// connect the host and add it to pollfd array
+	int to_client = server_connect(sd);
+	printf("[server] connected to host!\n");
+	fds[1].fd = to_client;
+	fds[1].events = POLLIN;
+	num_users++;
+
 	while (1) {
-		int to_client = server_connect(sd);
-		printf("[server] connected to client!\n");
-		char start[10];
+		int num_avail = poll(fds, num_users, -1);  // poll forever
+		int seen = 0;
+		int i;
+		for (i = 0; i <= num_users; i++) {
+			if (seen == num_avail) break;
 
-		// Receive USERNAME Packet
-		struct TRPacket *USERNAME = recv_usr_pkt(to_client);
-		print_packet(USERNAME);
+			// Listener Socket -> Connect Client
+			if (i == 0 && fds[i].revents == POLLIN) {
+				seen++;
+				num_users++;
 
-		// Receive packet to start
-		recv(to_client, start, sizeof(start),0);
+				// New client Connects
+				int to_client = server_connect(fds[0].fd);
 
-		if (strcmp(start,"Y\n")==0) { // Received Message to Start Game
-			char * text = generate_text();
-			struct TRPacket *TEXT = calloc(1, sizeof(struct TRPacket));
-			TEXT->type = 2;
-		    TEXT->text_length = strlen(text);
-		    TEXT->text = text;
-			send_typetext_pkt(to_client,TEXT);
-		} else if (strcmp(start,"N\n")==0) {
-			char * text = "N\n";
-			send(to_client, text, 4032, 0);
+				// Add to array of pollfd structs
+				fds[num_users].fd = to_client;
+				fds[num_users].events = POLLIN;
+
+				// Receive Username Packet
+				struct TRPacket *USERNAME = recv_usr_pkt(to_client);
+				print_packet(USERNAME);
+
+				// Sends Typetext Packet
+				char * text = generate_text();
+				struct TRPacket *TEXT = calloc(1, sizeof(struct TRPacket));
+				TEXT->type = 2;
+			    TEXT->text_length = strlen(text);
+			    TEXT->text = text;
+				send_typetext_pkt(to_client,TEXT);
+				// handle new connection
+				// get username
+				// send the text to new connection
+				// broadcast new user's username to everyone else
+			}
+
+			// Host Socket
+			else if (i == 1 && fds[i].revents == POLLIN) {
+				seen++;
+
+				// Receive packet to start
+				char start[10];
+				recv(to_client, start, sizeof(start),0);
+
+				// IMPLEMENT sending out race start packet
+				if (strcmp(start,"Y\n")==0) { // Received Message to Start Game
+					// send out race start packet to everyone
+				} else if (strcmp(start,"N\n")==0) {
+					// restart game
+				}
+			}
 		}
+	}
+
+	fds[0].fd = -1 * sd;  // stop polling listener socket
+
+	// While Loop to handle the game phase
+	while (1) {
+		// char start[10];
+		//
+		// // Receive USERNAME Packet
+		// struct TRPacket *USERNAME = recv_usr_pkt(to_client);
+		// print_packet(USERNAME);
+		//
+		// // Receive packet to start
+		// recv(to_client, start, sizeof(start),0);
+		//
+		// if (strcmp(start,"Y\n")==0) { // Received Message to Start Game
+		// 	char * text = generate_text();
+		// 	struct TRPacket *TEXT = calloc(1, sizeof(struct TRPacket));
+		// 	TEXT->type = 2;
+		//     TEXT->text_length = strlen(text);
+		//     TEXT->text = text;
+		// 	send_typetext_pkt(to_client,TEXT);
+		// } else if (strcmp(start,"N\n")==0) {
+		// 	char * text = "N\n";
+		// 	send(to_client, text, 4032, 0);
+		// }
 	}
 
 	return 0;
@@ -93,7 +162,7 @@ char * generate_text(){
 		text = "To be, or not to be, that is the question: Whether 'tis nobler in the mind to suffer The slings and arrows of outrageous fortune, Or to take arms against a sea of troubles And by opposing end them.\0";
 	}
 	else if (r == 2){
-		text = "The history of all hitherto existing society is the history of class struggles. Freeman and slave, patrician and plebeian, lord and serf, guild-maste and journeyman, in a word, oppressor and oppressed\0"
+		text = "The history of all hitherto existing society is the history of class struggles. Freeman and slave, patrician and plebeian, lord and serf, guild-maste and journeyman, in a word, oppressor and oppressed\0";
 	} else if(r == 3) {
 		text = "Maya hii Maya hoo Maya haaah Maya haaah haah Maya hoo Maya haah Maya haah haah Maya hiiMaya hoo Maya haah Maya haah haaah \0";
 	}

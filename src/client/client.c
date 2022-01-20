@@ -61,7 +61,7 @@ char * get_send_usrname(int sockfd) {
 
 int do_connect() {
     printf("Welcome to TypeRacer!\n\n");
-    
+
     printf("Hostname (leave blank for localhost): ");
     char *hostname = calloc(6, sizeof(char));  // see https://stackoverflow.com/questions/8724954/what-is-the-maximum-number-of-characters-for-a-host-name-in-unix
     fgets(hostname, 256, stdin);
