@@ -67,4 +67,7 @@ struct TRPacket * recv_rstart_pkt(int sockfd);
 int send_progress_pkt(int sockfd, struct TRPacket *packet);
 struct TRPacket * recv_progress_pkt(int sockfd);
 
+int send_urhost_pkt(int sockfd, struct TRPacket *packet);
+struct TRPacket * recv_urhost_pkt(int sockfd);
+
 #endif

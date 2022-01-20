@@ -333,6 +333,64 @@ struct TRPacket * recv_rstart_pkt(int sockfd) {
 
 
 /**
+ * Sends a packet of type 6 through a socket. Checks
+ * if packet type is correct before sending.
+ * 
+ * @param sockfd socket descriptor
+ * @param packet packet to send
+ * @return 0 on success, other values on failure
+ */
+int send_urhost_pkt(int sockfd, struct TRPacket *packet) {
+    if (packet->type != 6) {  // wrong type
+        return -1;
+    }
+
+    unsigned int data_size = 4;
+    uint8_t *data = malloc(data_size);
+
+    uint16_t _data_size = htons(data_size);
+    uint16_t _packet_type = htons(packet->type);
+
+    memcpy(data, &_data_size, 2);
+    memcpy(data+2, &_packet_type, 2);
+
+    int sent = sendall(sockfd, data, &data_size);
+
+    return 0;
+}
+
+
+/**
+ * Recieves a packet of type 6. Allocates memory for packet
+ * and returns a pointer to it.
+ *
+ * @return pointer to recieved packet
+ */
+struct TRPacket * recv_urhost_pkt(int sockfd) {
+    struct TRPacket *ret = calloc(1, sizeof(struct TRPacket));
+    unsigned int data_size = 2;
+    uint8_t *data = calloc(1, data_size);
+
+    int _read = recv_n_bytes(sockfd, data, 2);
+    data_size = ntohs(*((uint16_t *) data));  // conversion magic
+
+    data = realloc(data, data_size);
+    _read = recv_n_bytes(sockfd, data+2, data_size-2);  // read the rest
+
+    unsigned int type = ntohs(*((uint16_t *) (data+2)));  // get the type
+    if (type != 6) {  // wrong type
+        free(data);
+        return NULL;
+    }
+
+    ret->type = type;
+
+    free(data);
+    return ret;
+}
+
+
+/**
  * Prints a TRPacket packet
  * @param packet Packet to be printed
  */
