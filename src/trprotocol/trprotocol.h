@@ -30,6 +30,9 @@ struct TRPacket {
 			unsigned int progress;
 			unsigned int wpm;
 		};
+
+		// Packet type 6
+		unsigned int host;
 	};
 };
 

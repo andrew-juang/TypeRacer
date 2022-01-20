@@ -345,14 +345,16 @@ int send_urhost_pkt(int sockfd, struct TRPacket *packet) {
         return -1;
     }
 
-    unsigned int data_size = 4;
+    unsigned int data_size = 6;
     uint8_t *data = malloc(data_size);
 
     uint16_t _data_size = htons(data_size);
     uint16_t _packet_type = htons(packet->type);
+    uint16_t _host = htons(packet->host);
 
     memcpy(data, &_data_size, 2);
     memcpy(data+2, &_packet_type, 2);
+    memcpy(data+4, &_host, 2);
 
     int sent = sendall(sockfd, data, &data_size);
 
@@ -384,6 +386,7 @@ struct TRPacket * recv_urhost_pkt(int sockfd) {
     }
 
     ret->type = type;
+    ret->host = ntohs(*((uint16_t *) (data+4)));  // get the host status
 
     free(data);
     return ret;
