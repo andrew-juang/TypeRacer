@@ -9,6 +9,19 @@ int main() {
 
     struct TRPacket *TEXT = recv_typetext_pkt(sd);  // Receive Text to be typed
 
+    // IF IS HOST Host fgets the game start
+    // IF YES, send game start packet
+
+    // char line[10];
+    // printf("Start Game? [Y/N]: "); // Prompt
+	// fgets(line, 10, stdin); // Read from STDIN
+    // if (strcmp(line,"N\n")==0 || strcmp(line,"Y\n")!=0) return 0; // If, end client
+	// send(sd, line, sizeof(line), 0); // send Y/N to server
+
+    // receive game start packet run this shit below
+    // struct TRPacket *rstart = recv_rstart_pkt(sd);
+
+
     setup_curses();
     draw_pregame();
 
