@@ -8,6 +8,13 @@ int main() {
 	srand(time(NULL)); // Seed RNG
 	signal(SIGINT, sighandler); // Handle Signals
 
+	// Generate text and put it into a packet
+	char *text = generate_text();
+	struct TRPacket *text_packet = calloc(1, sizeof(struct TRPacket));
+	text_packet->type = 2;
+	text_packet->text_length = strlen(text);
+	text_packet->text = text;
+
 	sd = server_setup(); // Binds to a port and listens for incoming connections
 
 	struct pollfd *fds = calloc(20, sizeof(struct pollfd));
@@ -26,8 +33,10 @@ int main() {
 
 	while (1) {
 		int num_avail = poll(fds, num_users, -1);  // poll forever
+
 		int seen = 0;
 		int i;
+
 		for (i = 0; i <= num_users; i++) {
 			if (seen == num_avail) break;
 
@@ -47,17 +56,12 @@ int main() {
 				struct TRPacket *USERNAME = recv_usr_pkt(to_client);
 				print_packet(USERNAME);
 
-				// Sends Typetext Packet
-				char * text = generate_text();
-				struct TRPacket *TEXT = calloc(1, sizeof(struct TRPacket));
-				TEXT->type = 2;
-				TEXT->text_length = strlen(text);
-				TEXT->text = text;
-				send_typetext_pkt(to_client,TEXT);
-				// handle new connection
-				// get username
-				// send the text to new connection
-				// broadcast new user's username to everyone else
+				send_typetext_pkt(to_client,text_packet);  // Sends Typetext Packet
+
+				int j;
+				for (j = 1; j < num_users; j++) {
+					// figure this out later
+				}
 			}
 
 			// Host Socket
@@ -78,7 +82,10 @@ int main() {
 		}
 	}
 
+	// clean up stuff before game
 	fds[0].fd = -1 * sd;  // stop polling listener socket
+	free(text);
+	free(text_packet);
 
 	// While Loop to handle the game phase
 	while (1) {
@@ -93,11 +100,11 @@ int main() {
 		//
 		// if (strcmp(start,"Y\n")==0) { // Received Message to Start Game
 		// 	char * text = generate_text();
-		// 	struct TRPacket *TEXT = calloc(1, sizeof(struct TRPacket));
-		// 	TEXT->type = 2;
-		//     TEXT->text_length = strlen(text);
-		//     TEXT->text = text;
-		// 	send_typetext_pkt(to_client,TEXT);
+		// 	struct TRPacket *text_packet = calloc(1, sizeof(struct TRPacket));
+		// 	text_packet->type = 2;
+		//     text_packet->text_length = strlen(text);
+		//     text_packet->text = text;
+		// 	send_typetext_pkt(to_client,text_packet);
 		// } else if (strcmp(start,"N\n")==0) {
 		// 	char * text = "N\n";
 		// 	send(to_client, text, 4032, 0);
