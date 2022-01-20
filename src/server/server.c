@@ -32,6 +32,9 @@ int main() {
 	fds[1].events = POLLIN;
 	num_users++;
 
+	// Send text packet
+	send_typetext_pkt(to_client, text_packet);
+
 	// Tell the host that they're host
 	struct TRPacket *host_pkt = calloc(1, sizeof(struct TRPacket));
 	host_pkt->type = 6;
