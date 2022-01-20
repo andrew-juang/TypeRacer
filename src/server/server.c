@@ -36,6 +36,7 @@ int main() {
 
 		int seen = 0;
 		int i;
+		int done = 0;
 
 		for (i = 0; i <= num_users; i++) {
 			if (seen == num_avail) break;
@@ -68,18 +69,13 @@ int main() {
 			else if (i == 1 && fds[i].revents == POLLIN) {
 				seen++;
 
-				// Receive packet to start
-				char start[10];
-				recv(to_client, start, sizeof(start),0);
-
-				// IMPLEMENT sending out race start packet
-				if (strcmp(start,"Y\n")==0) { // Received Message to Start Game
-					// send out race start packet to everyone
-				} else if (strcmp(start,"N\n")==0) {
-					// restart game
-				}
+				struct TRPacket *rstart = recv_rstart_pkt(fds[i].fd);
+				done++;
+				break;
 			}
 		}
+
+		if (done) break;
 	}
 
 	// clean up stuff before game
