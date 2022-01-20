@@ -8,12 +8,8 @@ int main() {
 	srand(time(NULL)); // Seed RNG
 	signal(SIGINT, sighandler); // Handle Signals
 
-	// Generate text and put it into a packet
-	char *text = generate_text();
-	struct TRPacket *text_packet = calloc(1, sizeof(struct TRPacket));
-	text_packet->type = 2;
-	text_packet->text_length = strlen(text);
-	text_packet->text = text;
+	// Text packet with randomly generated text
+	struct TRPacket *text_packet = generate_text_packet();
 
 	sd = server_setup(); // Binds to a port and listens for incoming connections
 
@@ -27,7 +23,6 @@ int main() {
 	// connect the host and add it to pollfd array
 	int to_client = server_connect(sd);
 	printf("[server] connected to host!\n");
-
 	fds[1].fd = to_client;
 	fds[1].events = POLLIN;
 	num_users++;
@@ -45,6 +40,9 @@ int main() {
 	host_pkt->host = 1;
 	send_urhost_pkt(to_client, host_pkt);
 	free(host_pkt);
+
+	// Send the text to the host
+	send_typetext_pkt(to_client, text_packet);
 
 	// Create a packet to tell non-host clients that they're not
 	struct TRPacket *not_host = calloc(1, sizeof(struct TRPacket));
@@ -105,6 +103,7 @@ int main() {
 
 	// clean up stuff before game
 	fds[0].fd = -1 * sd;  // stop polling listener socket
+	free(text_packet->text);
 	free(text_packet);
 
 	// // While Loop to handle the game phase
@@ -194,4 +193,22 @@ char * generate_text(){
 		text = "Maya hii Maya hoo Maya haaah Maya haaah haah Maya hoo Maya haah Maya haah haah Maya hiiMaya hoo Maya haah Maya haah haaah \0";
 	}
 	return text;
+}
+
+
+/**
+ * Generates a text packet with randomly generated text.
+ * Important: free the text field, then the TRPacket.
+ * 
+ * @return a pointer to a text TRPacket
+ */
+struct TRPacket * generate_text_packet() {
+	char *text = generate_text();
+
+	struct TRPacket *text_packet = calloc(1, sizeof(struct TRPacket));
+	text_packet->type = 2;
+	text_packet->text_length = strlen(text);
+	text_packet->text = text;
+
+	return text_packet;
 }

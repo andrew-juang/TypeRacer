@@ -7,7 +7,16 @@ int main() {
 
     char *username = get_send_usrname(sd);  // Username prompt and processing
 
-    struct TRPacket *TEXT = recv_typetext_pkt(sd);  // Receive Text to be typed
+    // Is this client the host?
+    struct TRPacket *host_pkt = recv_urhost_pkt(sd);
+    int am_host = host_pkt->host;
+    free(host_pkt);
+
+    struct TRPacket *text_pkt = recv_typetext_pkt(sd);  // Receive Text to be typed
+    char *type_text = text_pkt->text;
+    free(text_pkt);  // free the packet, but not the text
+
+    setup_curses();
 
     struct TRPacket *_host = recv_urhost_pkt(sd); // Receive is host packet
 

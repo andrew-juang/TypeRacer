@@ -21,5 +21,6 @@ int server_setup();
 int server_connect(int from_client);
 
 char * generate_text();
+struct TRPacket * generate_text_packet();
 
 #endif
