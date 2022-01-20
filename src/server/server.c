@@ -32,6 +32,10 @@ int main() {
 	fds[1].events = POLLIN;
 	num_users++;
 
+	// Receive Username Packet
+	struct TRPacket *_username = recv_usr_pkt(to_client);
+	print_packet(_username);
+
 	// Send text packet
 	send_typetext_pkt(to_client, text_packet);
 
@@ -75,18 +79,22 @@ int main() {
 
 				send_typetext_pkt(fds[i].fd, text_packet);  // Sends Typetext Packet
 				send_urhost_pkt(fds[i].fd, not_host);  // they're not host
-
-				int j;
-				for (j = 1; j < num_users; j++) {
-					// figure this out later
-				}
 			}
 
 			// Host Socket
 			else if (i == 1 && fds[i].revents == POLLIN) {
 				seen++;
 
-				struct TRPacket *rstart = recv_rstart_pkt(fds[i].fd);
+				struct TRPacket *rstart = recv_rstart_pkt(fds[i].fd); // Receive race start packet
+				printf("[server] received race start packet");
+
+				int j;
+				for (j = 1; j < num_users; j++) {
+					struct TRPacket *rstart_pkt = calloc(1, sizeof(struct TRPacket));
+			        send_rstart_pkt(fds[j].fd, rstart_pkt); // Send race start packet
+					free(rstart_pkt);
+				}
+
 				done++;
 				break;
 			}
@@ -97,33 +105,31 @@ int main() {
 
 	// clean up stuff before game
 	fds[0].fd = -1 * sd;  // stop polling listener socket
-	free(text);
 	free(text_packet);
-	free(not_host);
 
-	// While Loop to handle the game phase
-	while (1) {
-		// char start[10];
-		//
-		// // Receive USERNAME Packet
-		// struct TRPacket *USERNAME = recv_usr_pkt(to_client);
-		// print_packet(USERNAME);
-		//
-		// // Receive packet to start
-		// recv(to_client, start, sizeof(start),0);
-		//
-		// if (strcmp(start,"Y\n")==0) { // Received Message to Start Game
-		// 	char * text = generate_text();
-		// 	struct TRPacket *text_packet = calloc(1, sizeof(struct TRPacket));
-		// 	text_packet->type = 2;
-		//     text_packet->text_length = strlen(text);
-		//     text_packet->text = text;
-		// 	send_typetext_pkt(to_client,text_packet);
-		// } else if (strcmp(start,"N\n")==0) {
-		// 	char * text = "N\n";
-		// 	send(to_client, text, 4032, 0);
-		// }
-	}
+	// // While Loop to handle the game phase
+	// while (1) {
+	// 	// char start[10];
+	// 	//
+	// 	// // Receive USERNAME Packet
+	// 	// struct TRPacket *USERNAME = recv_usr_pkt(to_client);
+	// 	// print_packet(USERNAME);
+	// 	//
+	// 	// // Receive packet to start
+	// 	// recv(to_client, start, sizeof(start),0);
+	// 	//
+	// 	// if (strcmp(start,"Y\n")==0) { // Received Message to Start Game
+	// 	// 	char * text = generate_text();
+	// 	// 	struct TRPacket *text_packet = calloc(1, sizeof(struct TRPacket));
+	// 	// 	text_packet->type = 2;
+	// 	//     text_packet->text_length = strlen(text);
+	// 	//     text_packet->text = text;
+	// 	// 	send_typetext_pkt(to_client,text_packet);
+	// 	// } else if (strcmp(start,"N\n")==0) {
+	// 	// 	char * text = "N\n";
+	// 	// 	send(to_client, text, 4032, 0);
+	// 	// }
+	// }
 
 	return 0;
 }
