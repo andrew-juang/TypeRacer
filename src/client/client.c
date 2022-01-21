@@ -31,7 +31,6 @@ int main() {
 
     // // receive game start packet run this shit below
     struct TRPacket *rstart = recv_rstart_pkt(sd);
-    printf("[server] received race start packet\n");
     //
     //
     // setup_curses();

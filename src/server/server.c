@@ -83,11 +83,10 @@ int main() {
 				struct TRPacket *rstart = recv_rstart_pkt(fds[i].fd); // Receive race start packet
 
 				int j;
-				for (j = 1; j < num_users; j++) {
+				for (j = 1; j <= num_users; j++) {
 					struct TRPacket *rstart_pkt = calloc(1, sizeof(struct TRPacket));
 					rstart_pkt->type = 4;
 			        send_rstart_pkt(fds[j].fd, rstart_pkt); // Send race start packet
-					printf("[server] sent race start packet\n");
 					free(rstart_pkt);
 				}
 
