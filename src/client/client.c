@@ -29,43 +29,43 @@ int main() {
         free(rstart_pkt);
     }
 
-    // // receive game start packet run this shit below
+    // receive game start packet run this shit below
     struct TRPacket *rstart = recv_rstart_pkt(sd);
-    //
-    //
-    // setup_curses();
-    // draw_pregame();
-    //
-    // // Set up screen
-    // int row, col;
-    // getmaxyx(stdscr, row, col);
-    //
-    // attron(COLOR_PAIR(1));
-    // mvprintw(0, 2, "TypeRacer");
-    //
-    // attron(COLOR_PAIR(2));
-    // mvprintw(0, col-12, "Accuracy: 85");
-    // mvprintw(0, col-22, "WPM 65");
-    //
-    // attron(COLOR_PAIR(3));
-    // mvprintw(3, 2, "%s", TEXT->text);
-    //
-    // attron(COLOR_PAIR(3));
-    // mvprintw(row-2, 2, "%s", username);
-    //
-    // refresh();
-    //
-    //
-    //
-    //
-    // getch();
-    // endwin();
-    //
+
+
+    setup_curses();
+    draw_pregame();
+
+    // Set up screen
+    int row, col;
+    getmaxyx(stdscr, row, col);
+
+    attron(COLOR_PAIR(1));
+    mvprintw(0, 2, "TypeRacer");
+
+    attron(COLOR_PAIR(2));
+    mvprintw(0, col-12, "Accuracy: 85");
+    mvprintw(0, col-22, "WPM 65");
+
+    attron(COLOR_PAIR(3));
+    mvprintw(3, 2, "%s", type_text);
+
+    attron(COLOR_PAIR(3));
+    mvprintw(row-2, 2, "%s", username);
+
+    refresh();
+
+
+
+
+    getch();
+    endwin();
+
     // free(username);
     // free(TEXT);
     // free(_host);
-    //
-    // return 0;
+
+    return 0;
 }
 
 char * get_send_usrname(int sockfd) {
