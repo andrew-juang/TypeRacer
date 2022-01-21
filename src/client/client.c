@@ -16,8 +16,6 @@ int main() {
     char *type_text = text_pkt->text;
     free(text_pkt);  // free the packet, but not the text
 
-    setup_curses();
-
     if (am_host) { // if is host prompt start game
         char line[10];
         printf("Start Game? [Y/N]: "); // Prompt
@@ -26,15 +24,14 @@ int main() {
         if (strcmp(line,"N\n")==0 || strcmp(line,"Y\n")!=0) return 0; // If N, end client
 
         struct TRPacket *rstart_pkt = calloc(1, sizeof(struct TRPacket));
+        rstart_pkt->type = 4;
         send_rstart_pkt(sd, rstart_pkt); // Send race start packet
         free(rstart_pkt);
-    } else {
-        struct TRPacket *rstart = recv_rstart_pkt(sd);
-        print_packet(rstart);
     }
 
     // // receive game start packet run this shit below
-    // struct TRPacket *rstart = recv_rstart_pkt(sd);
+    struct TRPacket *rstart = recv_rstart_pkt(sd);
+    printf("[server] received race start packet\n");
     //
     //
     // setup_curses();

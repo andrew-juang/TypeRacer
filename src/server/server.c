@@ -72,8 +72,8 @@ int main() {
 				struct TRPacket *_username = recv_usr_pkt(to_client);
 				print_packet(_username);
 
-				send_urhost_pkt(fds[i].fd, not_host);  // they're not host
-				send_typetext_pkt(fds[i].fd, text_packet);  // Sends Typetext Packet
+				send_urhost_pkt(fds[num_users].fd, not_host);  // they're not host
+				send_typetext_pkt(fds[num_users].fd, text_packet);  // Sends Typetext Packet
 			}
 
 			// Host Socket
@@ -81,12 +81,13 @@ int main() {
 				seen++;
 
 				struct TRPacket *rstart = recv_rstart_pkt(fds[i].fd); // Receive race start packet
-				printf("[server] received race start packet");
 
 				int j;
 				for (j = 1; j < num_users; j++) {
 					struct TRPacket *rstart_pkt = calloc(1, sizeof(struct TRPacket));
+					rstart_pkt->type = 4;
 			        send_rstart_pkt(fds[j].fd, rstart_pkt); // Send race start packet
+					printf("[server] sent race start packet\n");
 					free(rstart_pkt);
 				}
 
@@ -100,12 +101,11 @@ int main() {
 
 	// clean up stuff before game
 	fds[0].fd = -1 * sd;  // stop polling listener socket
-	free(text_packet->text);
 	free(text_packet);
 	free(not_host);
 
 	// // While Loop to handle the game phase
-	// while (1) {
+	while (1) {
 	// 	// char start[10];
 	// 	//
 	// 	// // Receive USERNAME Packet
@@ -126,7 +126,7 @@ int main() {
 	// 	// 	char * text = "N\n";
 	// 	// 	send(to_client, text, 4032, 0);
 	// 	// }
-	// }
+	}
 
 	return 0;
 }
@@ -197,7 +197,7 @@ char * generate_text(){
 /**
  * Generates a text packet with randomly generated text.
  * Important: free the text field, then the TRPacket.
- * 
+ *
  * @return a pointer to a text TRPacket
  */
 struct TRPacket * generate_text_packet() {
