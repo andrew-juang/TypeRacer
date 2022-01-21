@@ -29,9 +29,8 @@ int main() {
         free(rstart_pkt);
     }
 
-    // receive game start packet run this shit below
+    // Receive game start packet
     struct TRPacket *rstart = recv_rstart_pkt(sd);
-
 
     setup_curses();
     draw_pregame();
@@ -55,10 +54,25 @@ int main() {
 
     refresh();
 
+    bool running = true;
+
+    // CLIENT GAME LOOP 
+    do {
+        if(getch() == 'q') {
+            running = false;
+        }
+
+        // IF SPACE SEND progress packet to server
+        // RECEIVE progress of other clients from server
+        // SLEEP
+        // REDRAW screen based on keyboard input
+
+        refresh();
+
+    } while(running);
+    // getch();
 
 
-
-    getch();
     endwin();
 
     // free(username);

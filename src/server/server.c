@@ -83,7 +83,7 @@ int main() {
 				struct TRPacket *rstart = recv_rstart_pkt(fds[i].fd); // Receive race start packet
 
 				int j;
-				for (j = 1; j <= num_users; j++) {
+				for (j = 1; j <= num_users; j++) { // Send game start to all users
 					struct TRPacket *rstart_pkt = calloc(1, sizeof(struct TRPacket));
 					rstart_pkt->type = 4;
 			        send_rstart_pkt(fds[j].fd, rstart_pkt); // Send race start packet
@@ -103,28 +103,9 @@ int main() {
 	free(text_packet);
 	free(not_host);
 
-	// // While Loop to handle the game phase
+	// GAME LOOP
 	while (1) {
-	// 	// char start[10];
-	// 	//
-	// 	// // Receive USERNAME Packet
-	// 	// struct TRPacket *USERNAME = recv_usr_pkt(to_client);
-	// 	// print_packet(USERNAME);
-	// 	//
-	// 	// // Receive packet to start
-	// 	// recv(to_client, start, sizeof(start),0);
-	// 	//
-	// 	// if (strcmp(start,"Y\n")==0) { // Received Message to Start Game
-	// 	// 	char * text = generate_text();
-	// 	// 	struct TRPacket *text_packet = calloc(1, sizeof(struct TRPacket));
-	// 	// 	text_packet->type = 2;
-	// 	//     text_packet->text_length = strlen(text);
-	// 	//     text_packet->text = text;
-	// 	// 	send_typetext_pkt(to_client,text_packet);
-	// 	// } else if (strcmp(start,"N\n")==0) {
-	// 	// 	char * text = "N\n";
-	// 	// 	send(to_client, text, 4032, 0);
-	// 	// }
+
 	}
 
 	return 0;
