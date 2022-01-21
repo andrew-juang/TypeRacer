@@ -33,51 +33,37 @@ int main() {
     struct TRPacket *rstart = recv_rstart_pkt(sd);
 
     setup_curses();
-    draw_pregame();
 
     // Set up screen
-    int row, col;
-    getmaxyx(stdscr, row, col);
 
-    attron(COLOR_PAIR(1));
-    mvprintw(0, 2, "TypeRacer");
+    
 
-    attron(COLOR_PAIR(2));
-    mvprintw(0, col-12, "Accuracy: 85");
-    mvprintw(0, col-22, "WPM 65");
 
-    attron(COLOR_PAIR(3));
-    mvprintw(3, 2, "%s", type_text);
-
-    attron(COLOR_PAIR(3));
-    mvprintw(row-2, 2, "%s", username);
+    
 
     refresh();
 
-    bool running = true;
+    int state = 1;
 
-    // CLIENT GAME LOOP 
-    do {
-        if(getch() == 'q') {
-            running = false;
+    // Main Loop 
+    while (state) {
+        if (state == 1) {  // pregame
+            draw_static_elements(username);
+        }
+        else if (state == 2) {
+            
+            // game
+            // IF SPACE SEND progress packet to server
+            // RECEIVE progress of other clients from server
+            // SLEEP
+            // REDRAW screen based on keyboard input
         }
 
-        // IF SPACE SEND progress packet to server
-        // RECEIVE progress of other clients from server
-        // SLEEP
-        // REDRAW screen based on keyboard input
-
         refresh();
-
-    } while(running);
-    // getch();
+    }
 
 
     endwin();
-
-    // free(username);
-    // free(TEXT);
-    // free(_host);
 
     return 0;
 }
@@ -197,6 +183,44 @@ void setup_curses() {
     init_pair(3, COLOR_WHITE, COLOR_BLACK);
 }
 
-void draw_pregame() {
-    ;
+
+/**
+ * Draws static elements (Typetext header,
+ * username footer)
+ * 
+ * @param username This username
+ */
+void draw_static_elements(char *username) {
+    // Terminal dimensions
+    int row, col;
+    getmaxyx(stdscr, row, col);
+
+    // Draw Typeracer text
+    attron(COLOR_PAIR(1));
+    mvprintw(0, 2, "TypeRacer");
+
+    // Draw username text
+    attron(COLOR_PAIR(3));
+    mvprintw(row-2, 2, "%s", username);
+}
+
+
+/**
+ * Draws dynamic elements (Accuracy, WPM, 
+ * typed text, errors, etc)
+ * 
+ * @param type_text Text to be typed
+ * @param user_typed Text the user has typed
+ */
+void draw_dynamic_elements(char *type_text, char *user_typed) {
+    // Terminal dimensions
+    int row, col;
+    getmaxyx(stdscr, row, col);
+
+    attron(COLOR_PAIR(2));
+    mvprintw(0, col-12, "Accuracy: 85");
+    mvprintw(0, col-22, "WPM 65");
+
+    attron(COLOR_PAIR(3));
+    mvprintw(3, 2, "%s", type_text);
 }

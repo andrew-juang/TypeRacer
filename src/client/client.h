@@ -18,7 +18,9 @@
 int do_connect();
 char * get_send_usrname(int sockfd);
 int client_connect(char *host, char *port);
+
 void setup_curses();
-void draw_pregame();
+void draw_static_elements(char *username);
+void draw_dynamic_elements(char *type_text, char *user_typed);
 
 #endif
