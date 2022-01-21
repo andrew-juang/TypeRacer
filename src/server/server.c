@@ -31,9 +31,6 @@ int main() {
 	struct TRPacket *_username = recv_usr_pkt(to_client);
 	print_packet(_username);
 
-	// Send text packet
-	send_typetext_pkt(to_client, text_packet);
-
 	// Tell the host that they're host
 	struct TRPacket *host_pkt = calloc(1, sizeof(struct TRPacket));
 	host_pkt->type = 6;
@@ -75,8 +72,8 @@ int main() {
 				struct TRPacket *_username = recv_usr_pkt(to_client);
 				print_packet(_username);
 
-				send_typetext_pkt(fds[i].fd, text_packet);  // Sends Typetext Packet
 				send_urhost_pkt(fds[i].fd, not_host);  // they're not host
+				send_typetext_pkt(fds[i].fd, text_packet);  // Sends Typetext Packet
 			}
 
 			// Host Socket
@@ -105,6 +102,7 @@ int main() {
 	fds[0].fd = -1 * sd;  // stop polling listener socket
 	free(text_packet->text);
 	free(text_packet);
+	free(not_host);
 
 	// // While Loop to handle the game phase
 	// while (1) {

@@ -18,9 +18,7 @@ int main() {
 
     setup_curses();
 
-    struct TRPacket *_host = recv_urhost_pkt(sd); // Receive is host packet
-
-    if (_host->host == 1) { // if is host prompt start game
+    if (am_host) { // if is host prompt start game
         char line[10];
         printf("Start Game? [Y/N]: "); // Prompt
     	fgets(line, 10, stdin); // Read from STDIN
