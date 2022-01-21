@@ -82,6 +82,13 @@ int main() {
     return 0;
 }
 
+
+/**
+ * Prompts the user for a username and sends it to
+ * the server.
+ * 
+ * @return The username inputted
+ */
 char * get_send_usrname(int sockfd) {
     char *username = calloc(1024, sizeof(char));
     struct TRPacket *uname_pkt = calloc(1, sizeof(struct TRPacket));
@@ -100,6 +107,13 @@ char * get_send_usrname(int sockfd) {
     return username;
 }
 
+
+/**
+ * Prompts the user for connection information
+ * and connects to the server specified.
+ * 
+ * @return A file descriptor for communication with the server
+ */
 int do_connect() {
     printf("Welcome to TypeRacer!\n\n");
 
@@ -126,6 +140,14 @@ int do_connect() {
     return sd;
 }
 
+
+/**
+ * Connects to the server
+ * 
+ * @param host Hostname/IP address string
+ * @param port port number string
+ * @return File descriptor for the connected server
+ */
 int client_connect(char *host, char *port) {
     struct addrinfo *hints, *results;
 
@@ -151,6 +173,11 @@ int client_connect(char *host, char *port) {
     return sd;
 }
 
+
+/**
+ * Sets up the terminal with no echoing,
+ * no cursor, and non-blocking getch
+ */
 void setup_curses() {
     // Initialize Curses
     initscr();
