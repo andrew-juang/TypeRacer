@@ -105,7 +105,7 @@ int main() {
 
 	// GAME LOOP
 	while (1) {
-
+		//
 	}
 
 	return 0;

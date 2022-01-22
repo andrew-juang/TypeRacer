@@ -36,29 +36,52 @@ int main() {
 
     // Set up screen
 
-    
 
-
-    
 
     refresh();
 
     int state = 1;
 
-    // Main Loop 
+    // Initialize text to be type
+    char *typed = calloc(1, strlen(type_text));
+    int text_position = 0;
+
+    // Main Loop
     while (state) {
         if (state == 1) {  // pregame
             draw_static_elements(username);
+
+            // Draw the text to be typed
+            attron(COLOR_PAIR(3));
+            mvprintw(3, 2, "%s", type_text);
+
+            state++;
         }
         else if (state == 2) {
-            
+
+            typed[text_position] = getch();
+            attron(COLOR_PAIR(2));
+            mvprintw(3, 2, "%s", typed);
+            type_text++;
+
+            attron(COLOR_PAIR(3));
+            printw("%s", type_text);
+            text_position++;
+
+
             // game
             // IF SPACE SEND progress packet to server
+
+
             // RECEIVE progress of other clients from server
             // SLEEP
             // REDRAW screen based on keyboard input
         }
 
+
+        if (getch() == 'q') { // QUIT game
+            state = 0;
+        }
         refresh();
     }
 
@@ -72,7 +95,7 @@ int main() {
 /**
  * Prompts the user for a username and sends it to
  * the server.
- * 
+ *
  * @return The username inputted
  */
 char * get_send_usrname(int sockfd) {
@@ -97,7 +120,7 @@ char * get_send_usrname(int sockfd) {
 /**
  * Prompts the user for connection information
  * and connects to the server specified.
- * 
+ *
  * @return A file descriptor for communication with the server
  */
 int do_connect() {
@@ -129,7 +152,7 @@ int do_connect() {
 
 /**
  * Connects to the server
- * 
+ *
  * @param host Hostname/IP address string
  * @param port port number string
  * @return File descriptor for the connected server
@@ -187,7 +210,7 @@ void setup_curses() {
 /**
  * Draws static elements (Typetext header,
  * username footer)
- * 
+ *
  * @param username This username
  */
 void draw_static_elements(char *username) {
@@ -206,9 +229,9 @@ void draw_static_elements(char *username) {
 
 
 /**
- * Draws dynamic elements (Accuracy, WPM, 
+ * Draws dynamic elements (Accuracy, WPM,
  * typed text, errors, etc)
- * 
+ *
  * @param type_text Text to be typed
  * @param user_typed Text the user has typed
  */
