@@ -57,6 +57,8 @@ int main() {
             attron(COLOR_PAIR(3));
             mvprintw(3, 2, "%s", type_text);
 
+            mvchgat(3, 2, 1, A_UNDERLINE, 0, NULL);
+
             state++;
         }
         else if (state == 2) {
@@ -85,9 +87,13 @@ int main() {
             attron(COLOR_PAIR(2));
             mvprintw(3, 2, "%s", typed);
 
+            int curr_x, curr_y;
+            getyx(stdscr, curr_y, curr_x);
+
             attron(COLOR_PAIR(3));
             printw("%s", type_text+text_position);
 
+            mvchgat(curr_y, curr_x, 1, A_UNDERLINE, 0, NULL);
 
             // game
             // IF SPACE SEND progress packet to server
