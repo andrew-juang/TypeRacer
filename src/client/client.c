@@ -42,10 +42,16 @@ int main() {
 
     int state = 1;
 
-    // Initialize text to be type
-    char *typed = calloc(1, strlen(type_text));
-    int text_position = 0;
-    int typed_ch;
+    char *typed = calloc(1, strlen(type_text));  // Text typed by player
+    int text_position = 0;  // Current position in text
+    int typed_ch;  // Last typed character
+    int text_len = strlen(type_text);  // Total text length
+
+    // Player Statistics
+    int total_typed = 0;
+    int wpm = 0;
+    int accuracy = 100;
+    int num_errors = 0;
 
     // Main Loop
     while (state) {
@@ -61,16 +67,33 @@ int main() {
         else if (state == 2) {
             typed_ch = getch();
 
-            if (typed_ch == ERR) continue;
+            switch (typed_ch) {
+                case ERR:  // nothing to getch
+                    continue;
+                    break;
 
-            typed[text_position] = typed_ch;
+                // Handle backspace for all terminals (maybe)
+                case KEY_BACKSPACE:
+                case KEY_DC:
+                case 127:
+                case '\b':
+                    if (text_position == 0) break;
+
+                    typed[--text_position] = 0;
+                    type_text--;
+                    break;
+
+                default:
+                    typed[text_position] = typed_ch;
+                    text_position++;
+                    type_text++;
+            }
+
             attron(COLOR_PAIR(2));
             mvprintw(3, 2, "%s", typed);
-            type_text++;
 
             attron(COLOR_PAIR(3));
             printw("%s", type_text);
-            text_position++;
 
 
             // game
@@ -239,14 +262,14 @@ void draw_static_elements(char *username) {
  * @param type_text Text to be typed
  * @param user_typed Text the user has typed
  */
-void draw_dynamic_elements(char *type_text, char *user_typed) {
+void draw_dynamic_elements(char *type_text, char *user_typed, int wpm, int accuracy) {
     // Terminal dimensions
     int row, col;
     getmaxyx(stdscr, row, col);
 
     attron(COLOR_PAIR(2));
-    mvprintw(0, col-12, "Accuracy: 85");
-    mvprintw(0, col-22, "WPM 65");
+    mvprintw(0, col-12, "Accuracy: N/A");
+    mvprintw(0, col-22, "WPM: %d", wpm);
 
     attron(COLOR_PAIR(3));
     mvprintw(3, 2, "%s", type_text);

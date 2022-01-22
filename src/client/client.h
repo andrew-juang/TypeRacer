@@ -21,6 +21,6 @@ int client_connect(char *host, char *port);
 
 void setup_curses();
 void draw_static_elements(char *username);
-void draw_dynamic_elements(char *type_text, char *user_typed);
+void draw_dynamic_elements(char *type_text, char *user_typed, int wpm, int accuracy);
 
 #endif
