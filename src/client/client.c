@@ -95,10 +95,6 @@ int main() {
                 }
             }
 
-            //
-            // attron(COLOR_PAIR(2));
-            // mvprintw(3, 0, "%s", typed);
-
             int curr_x, curr_y;
             getyx(stdscr, curr_y, curr_x);
 
