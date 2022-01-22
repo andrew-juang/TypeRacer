@@ -117,7 +117,7 @@ int main() {
         }
 
 
-        if (typed_ch == 27) { // QUIT game (escape char)
+        if (typed_ch == 27 || text_position == text_len) { // QUIT game (escape char)
             state = 0;
         }
         refresh();
