@@ -33,11 +33,6 @@ int main() {
     struct TRPacket *rstart = recv_rstart_pkt(sd);
 
     setup_curses();
-
-    // Set up screen
-
-
-
     refresh();
 
     int state = 1;
@@ -80,20 +75,18 @@ int main() {
                     if (text_position == 0) break;
 
                     typed[--text_position] = 0;
-                    type_text--;
                     break;
 
                 default:
                     typed[text_position] = typed_ch;
                     text_position++;
-                    type_text++;
             }
 
             attron(COLOR_PAIR(2));
             mvprintw(3, 2, "%s", typed);
 
             attron(COLOR_PAIR(3));
-            printw("%s", type_text);
+            printw("%s", type_text+text_position);
 
 
             // game
