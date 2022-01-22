@@ -45,6 +45,7 @@ int main() {
     // Initialize text to be type
     char *typed = calloc(1, strlen(type_text));
     int text_position = 0;
+    int typed_ch;
 
     // Main Loop
     while (state) {
@@ -58,8 +59,11 @@ int main() {
             state++;
         }
         else if (state == 2) {
+            typed_ch = getch();
 
-            typed[text_position] = getch();
+            if (typed_ch == ERR) continue;
+
+            typed[text_position] = typed_ch;
             attron(COLOR_PAIR(2));
             mvprintw(3, 2, "%s", typed);
             type_text++;
@@ -79,7 +83,7 @@ int main() {
         }
 
 
-        if (getch() == 'q') { // QUIT game
+        if (typed_ch == 'q') { // QUIT game
             state = 0;
         }
         refresh();
