@@ -55,9 +55,9 @@ int main() {
 
             // Draw the text to be typed
             attron(COLOR_PAIR(3));
-            mvprintw(3, 2, "%s", type_text);
+            mvprintw(3, 0, "%s", type_text);
 
-            mvchgat(3, 2, 1, A_UNDERLINE, 0, NULL);
+            mvchgat(3, 0, 1, A_UNDERLINE, 0, NULL);
 
             state++;
         }
@@ -84,8 +84,20 @@ int main() {
                     text_position++;
             }
 
-            attron(COLOR_PAIR(2));
-            mvprintw(3, 2, "%s", typed);
+            mvprintw(3, 0, "");
+            for (int i=0; i<strlen(typed); i++) {
+                if (typed[i] == type_text[i]) {
+                    attron(COLOR_PAIR(4));
+                    printw("%c", type_text[i]);
+                } else {
+                    attron(COLOR_PAIR(1));
+                    printw("%c", type_text[i]);
+                }
+            }
+
+            //
+            // attron(COLOR_PAIR(2));
+            // mvprintw(3, 0, "%s", typed);
 
             int curr_x, curr_y;
             getyx(stdscr, curr_y, curr_x);
@@ -105,7 +117,7 @@ int main() {
         }
 
 
-        if (typed_ch == 'q') { // QUIT game
+        if (typed_ch == 27) { // QUIT game (escape char)
             state = 0;
         }
         refresh();
@@ -230,6 +242,8 @@ void setup_curses() {
     init_pair(1, COLOR_RED, COLOR_BLACK);
     init_pair(2, COLOR_BLUE, COLOR_BLACK);
     init_pair(3, COLOR_WHITE, COLOR_BLACK);
+    init_pair(4, COLOR_CYAN, COLOR_BLACK);
+    init_pair(5, COLOR_MAGENTA, COLOR_BLACK);
 }
 
 
@@ -245,7 +259,7 @@ void draw_static_elements(char *username) {
     getmaxyx(stdscr, row, col);
 
     // Draw Typeracer text
-    attron(COLOR_PAIR(1));
+    attron(COLOR_PAIR(5));
     mvprintw(0, 2, "TypeRacer");
 
     // Draw username text

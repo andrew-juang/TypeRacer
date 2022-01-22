@@ -47,18 +47,16 @@ int main() {
 	not_host->host = 0;
 
 	while (1) {
+
 		int num_avail = poll(fds, num_users, -1);  // poll forever
 
-		int seen = 0;
 		int i;
 		int done = 0;
 
 		for (i = 0; i <= num_users; i++) {
-			if (seen == num_avail) break;
 
 			// Listener Socket -> Connect Client
 			if (i == 0 && fds[i].revents == POLLIN) {
-				seen++;
 				num_users++;
 
 				// New client Connects
@@ -77,10 +75,8 @@ int main() {
 			}
 
 			// Host Socket
-			else if (i == 1 && fds[i].revents == POLLIN) {
-				seen++;
-
-				struct TRPacket *rstart = recv_rstart_pkt(fds[i].fd); // Receive race start packet
+			if (i == 1 && fds[i].revents == POLLIN) {
+				struct TRPacket *rstart = recv_rstart_pkt(fds[1].fd); // Receive race start packet
 
 				int j;
 				for (j = 1; j <= num_users; j++) { // Send game start to all users
