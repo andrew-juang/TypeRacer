@@ -153,19 +153,31 @@ static void sighandler(int signo) {
 }
 
 char * generate_text(){
-	int r = rand()%4;
-	char * text = calloc(2000, sizeof(char));
-	if (r == 0){
-		text = "Four score and seven years ago our fathers brought forth on this continent, a new nation, conceived in Liberty, and dedicated to the proposition that all men are created equal. \0";
-	}
-	else if (r == 1) {
-		text = "To be, or not to be, that is the question: Whether 'tis nobler in the mind to suffer The slings and arrows of outrageous fortune, Or to take arms against a sea of troubles And by opposing end them.\0";
-	}
-	else if (r == 2){
-		text = "The history of all hitherto existing society is the history of class struggles. Freeman and slave, patrician and plebeian, lord and serf, guild-maste and journeyman, in a word, oppressor and oppressed\0";
-	} else if(r == 3) {
-		text = "Maya hii Maya hoo Maya haaah Maya haaah haah Maya hoo Maya haah Maya haah haah Maya hiiMaya hoo Maya haah Maya haah haaah \0";
-	}
+	int file = open("test.txt", O_RDONLY);
+	if(file==-1){
+        printf("Error opening:\n");
+        printf("%s\n", strerror(errno));
+        return 0;
+    }
+
+	// get file size
+	struct stat st;
+	stat("test.txt", &st);
+	int size = st.st_size;
+	printf("%d", size);
+
+	int r = rand() % (size-200);
+
+	lseek(file, r, SEEK_SET );
+
+	char * text = calloc(200, sizeof(char));
+	int err = read(file, text, 200);
+	if(err==-1){
+        printf("Error:\n");
+        printf("%s\n", strerror(errno));
+        return 0;
+    }
+
 	return text;
 }
 
