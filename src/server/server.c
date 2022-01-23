@@ -91,20 +91,20 @@ int main() {
 				int j;
 
 				// Send all connected usernames to the client
-				for (j = 0; j < num_users-1; j++) {
-					_user.uname_length = strlen(usernames[j]);
-					_user.username = usernames[j];
+				// for (j = 0; j < num_users-1; j++) {
+				// 	_user.uname_length = strlen(usernames[j]);
+				// 	_user.username = usernames[j];
 
-					send_pjoined_pkt(to_client, &_user);
-					print_packet(&_user, 1);
-				}
+				// 	send_pjoined_pkt(to_client, &_user);
+				// 	print_packet(&_user, 1);
+				// }
 
 				// Send other clients notification of this new client
-				_username->type = 1;
-				for (j = 1; j < num_users; j++) {
-					send_pjoined_pkt(fds[j].fd, _username);
-					print_packet(_username, 1);
-				}
+				// _username->type = 1;
+				// for (j = 1; j < num_users; j++) {
+				// 	send_pjoined_pkt(fds[j].fd, _username);
+				// 	print_packet(_username, 1);
+				// }
 
 				free(_username);  // free received packet
 			}

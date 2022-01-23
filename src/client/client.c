@@ -21,10 +21,30 @@ int main() {
     char *type_text = text_pkt->text;
     free(text_pkt);  // free the packet, but not the text
 
+    if (am_host) { // if is host prompt start game
+        char line[2];
+        printf("Start Game? [Y/N]: "); // Prompt
+    	fgets(line, 2, stdin); // Read from STDIN
+
+        if (strcmp(line,"N")==0 || strcmp(line,"Y")!=0) return 0; // If N, end client
+
+        struct TRPacket *rstart_pkt = calloc(1, sizeof(struct TRPacket));
+        rstart_pkt->type = 4;
+        send_rstart_pkt(sd, rstart_pkt); // Send race start packet
+        free(rstart_pkt);
+    }
+    else {
+        printf("Waiting for the host to start the game...\n");
+    }
+
+    poll(server_pollfd, 1, -1);
+    struct TRPacket *rstart = recv_rstart_pkt(sd);
+    free(rstart);
+
     setup_curses();
     refresh();
 
-    int state = am_host ? 1 : 2;  // initial state depends on host status
+    int state = 1;
 
     struct OtherPlayer other_players[MAX_PLAYERS];  // array of other players' info
     int num_users = 0;  // Number of other connected players less one
@@ -42,80 +62,9 @@ int main() {
     int accuracy = 100;
     int num_errors = 0;
 
-    draw_static_elements(username);
-    attron(COLOR_PAIR(3));
-    mvprintw(3, 0, "%s", type_text); // Draw the text to be typed
-    mvchgat(3, 0, 1, A_UNDERLINE, 0, NULL);
-
-    struct TRPacket *rstart_pkt = calloc(1, sizeof(struct TRPacket));
-    rstart_pkt->type = 4;
-
     // Main Loop
     while (state) {
-        if (state == 1) {  // pregame - host
-            int row, col;
-            getmaxyx(stdscr, row, col);
-            mvprintw(1, (col-27)/2, "To start game, press space");
-
-            typed_ch = getch();  // check the keyboard buffer
-            switch (typed_ch) {
-                case ERR:  // nothing to getch
-                    continue;
-                    break;
-
-                case ' ':
-                    send_rstart_pkt(sd, rstart_pkt); // Send race start packet
-                    break;
-            }
-
-            int recvd = poll(server_pollfd, 1, 50);  // poll for 50ms
-            if (recvd) {
-                struct TRPacket *_recvd = recv_types_014(sd);
-
-                if (_recvd->type == 4) {  // received game start packet
-                    fprintf(stderr, "recieved game start!\n");
-                    state = 3;
-                }
-                else {  // recieved a new player's info
-                    fprintf(stderr, "new player or something idk bruh\n");
-                    other_players[num_users].username = _recvd->username;
-                    other_players[num_users].progress = 0;
-                    other_players[num_users].wpm = 0;
-                    num_users++;
-                }
-                fprintf(stderr, "state after poll: %d\n", state);
-            }
-        }
-        else if (state == 2) {  // pregame - not host
-            int row, col;
-            getmaxyx(stdscr, row, col);
-            mvprintw(1, (col-34)/2, "Waiting for host to start game...");
-
-            typed_ch = getch();  // check the keyboard buffer
-
-            int recvd = poll(server_pollfd, 1, 50);  // poll for 50ms
-            if (recvd) {
-                struct TRPacket *_recvd = recv_types_014(sd);
-
-                if (_recvd->type == 4) {  // received game start packet
-                    fprintf(stderr, "recieved game start!\n");
-                    state = 3;
-                }
-                else {  // recieved a new player's info
-                    fprintf(stderr, "new player or something idk bruh\n");
-                    other_players[num_users].username = _recvd->username;
-                    other_players[num_users].progress = 0;
-                    other_players[num_users].wpm = 0;
-                    num_users++;
-                }
-                fprintf(stderr, "state after poll: %d\n", state);
-            }
-        }
-        else if (state == 3) {  // what used to be state 1
-            fprintf(stderr, "state 3\n");
-
-            free(rstart_pkt);
-            
+        if (state == 1) {  // Pre-game prep
             clear();
 
             draw_static_elements(username);
@@ -129,9 +78,9 @@ int main() {
             int _get_time_ret = clock_gettime(CLOCK_MONOTONIC, &start_time);  // get the start time
             if (_get_time_ret == -1) wpm = -1;
 
-            state = 4;  // go to game loop
+            state++;  // go to game loop
         }
-        else if (state == 4) {  // main game loop
+        else if (state == 2) {  // main game loop
             typed_ch = getch();
 
             switch (typed_ch) {
