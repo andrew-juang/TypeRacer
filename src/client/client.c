@@ -47,6 +47,9 @@ int main() {
     mvprintw(3, 0, "%s", type_text); // Draw the text to be typed
     mvchgat(3, 0, 1, A_UNDERLINE, 0, NULL);
 
+    struct TRPacket *rstart_pkt = calloc(1, sizeof(struct TRPacket));
+    rstart_pkt->type = 4;
+
     // Main Loop
     while (state) {
         if (state == 1) {  // pregame - host
@@ -60,9 +63,7 @@ int main() {
                     continue;
                     break;
 
-                case ' ':;
-                    struct TRPacket *rstart_pkt = calloc(1, sizeof(struct TRPacket));
-                    rstart_pkt->type = 4;
+                case ' ':
                     send_rstart_pkt(sd, rstart_pkt); // Send race start packet
                     free(rstart_pkt);
                     break;
