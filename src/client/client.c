@@ -4,7 +4,6 @@
 
 int main() {
     int sd = do_connect();  // Client connection
-    fcntl(sd, F_SETFL, O_NONBLOCK);  // set non-blocking mode
 
     struct pollfd server_pollfd;
     server_pollfd.events = POLLIN;
