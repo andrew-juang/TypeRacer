@@ -44,6 +44,8 @@ int main() {
     int text_position = 0;  // Current position in text
     int typed_ch;  // Last typed character
     int text_len = strlen(type_text);  // Total text length
+    struct timespec start_time;
+    struct timespec curr_time;
 
     // Player Statistics
     int total_typed = 0;
@@ -61,6 +63,9 @@ int main() {
             mvprintw(3, 0, "%s", type_text);
 
             mvchgat(3, 0, 1, A_UNDERLINE, 0, NULL);
+
+            int _get_time_ret = clock_gettime(CLOCK_MONOTONIC, &start_time);  // get the start time
+            if (_get_time_ret == -1) wpm = -1;
 
             state++;
         }
@@ -92,11 +97,21 @@ int main() {
             int row, col;
             getmaxyx(stdscr, row, col);
 
-            accuracy = (100 * (total_typed-num_errors) / total_typed);  // Calculate accuracy
-
             attron(COLOR_PAIR(5));
-            mvprintw(0, col-16, "Accuracy: %d", accuracy);
+            
+            int _get_time_ret = clock_gettime(CLOCK_MONOTONIC, &curr_time);  // get the current time
 
+            // Get the time elapsed in milliseconds
+            long time_milli_diff = ((curr_time.tv_sec - start_time.tv_sec) * 1000) +
+                                    ((curr_time.tv_nsec - start_time.tv_nsec) / 1000000.0);
+
+            wpm = (int) (((total_typed / 5.0) - num_errors) / (time_milli_diff / 60000.0));
+
+            if (wpm < 0) mvprintw(0, col-26, "WPM: 0");
+            else mvprintw(0, col-26, "WPM: %d", wpm);
+
+            accuracy = (100 * (total_typed-num_errors) / total_typed);  // Calculate accuracy
+            mvprintw(0, col-16, "Accuracy: %d", accuracy);
             if (accuracy < 100) mvprintw(0, col-4, " ");
 
             mvprintw(3, 0, "");
