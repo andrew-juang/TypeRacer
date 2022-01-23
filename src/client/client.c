@@ -4,6 +4,11 @@
 
 int main() {
     int sd = do_connect();  // Client connection
+    fcntl(sd, F_SETFL, O_NONBLOCK);  // set non-blocking mode
+
+    struct pollfd server_pollfd;
+    server_pollfd.events = POLLIN;
+    server_pollfd.fd = sd;
 
     char *username = get_send_usrname(sd);  // Username prompt and processing
 
@@ -16,29 +21,13 @@ int main() {
     char *type_text = text_pkt->text;
     free(text_pkt);  // free the packet, but not the text
 
-    if (am_host) { // if is host prompt start game
-        char line[2];
-        printf("Start Game? [Y/N]: "); // Prompt
-    	fgets(line, 2, stdin); // Read from STDIN
-
-        if (strcmp(line,"N")==0 || strcmp(line,"Y")!=0) return 0; // If N, end client
-
-        struct TRPacket *rstart_pkt = calloc(1, sizeof(struct TRPacket));
-        rstart_pkt->type = 4;
-        send_rstart_pkt(sd, rstart_pkt); // Send race start packet
-        free(rstart_pkt);
-    }
-    else {
-        printf("Waiting for the host to start the game...\n");
-    }
-
-    // Receive game start packet
-    struct TRPacket *rstart = recv_rstart_pkt(sd);
-
     setup_curses();
     refresh();
 
-    int state = 1;
+    int state = am_host ? 1 : 2;  // initial state depends on host status
+
+    struct OtherPlayer other_players[MAX_PLAYERS];  // array of other players' info
+    int num_users = 0;  // Number of other connected players less one
 
     char *typed = calloc(1, strlen(type_text));  // Text typed by player
     int text_position = 0;  // Current position in text
@@ -53,9 +42,61 @@ int main() {
     int accuracy = 100;
     int num_errors = 0;
 
+    draw_static_elements(username);
+    attron(COLOR_PAIR(3));
+    mvprintw(3, 0, "%s", type_text); // Draw the text to be typed
+    mvchgat(3, 0, 1, A_UNDERLINE, 0, NULL);
+
     // Main Loop
     while (state) {
-        if (state == 1) {  // pregame
+        if (state == 1) {  // pregame - host
+            int row, col;
+            getmaxyx(stdscr, row, col);
+            mvprintw(0, col/2, "To start game, Press Enter");
+
+            typed_ch = getch();  // check the keyboard buffer
+            switch (typed_ch) {
+                case ERR:  // nothing to getch
+                    continue;
+                    break;
+
+                case KEY_ENTER:;
+                    struct TRPacket *rstart_pkt = calloc(1, sizeof(struct TRPacket));
+                    rstart_pkt->type = 4;
+                    send_rstart_pkt(sd, rstart_pkt); // Send race start packet
+                    free(rstart_pkt);
+                    break;
+            }
+
+            int recvd = poll(&server_pollfd, 1, 10);  // poll for 10ms
+            if (recvd) {
+                struct TRPacket *_recvd = recv_types_014(sd);
+
+                if (_recvd->type == 4) {  // received game start packet
+                    state == 3;
+                }
+                else {  // recieved a new player's info
+                    other_players[num_users].username = _recvd->username;
+                    other_players[num_users].progress = 0;
+                    other_players[num_users].wpm = 0;
+                    num_users++;
+                }
+            }
+        }
+        else if (state == 2) {  // pregame - not host
+            struct TRPacket *_recvd = recv_types_014(sd);
+
+                if (_recvd->type == 4) {  // received game start packet
+                    state == 3;
+                }
+                else {  // recieved a new player's info
+                    other_players[num_users].username = _recvd->username;
+                    other_players[num_users].progress = 0;
+                    other_players[num_users].wpm = 0;
+                    num_users++;
+                }
+        }
+        else if (state == 3) {  // what used to be state 1
             draw_static_elements(username);
 
             // Draw the text to be typed
@@ -67,9 +108,9 @@ int main() {
             int _get_time_ret = clock_gettime(CLOCK_MONOTONIC, &start_time);  // get the start time
             if (_get_time_ret == -1) wpm = -1;
 
-            state++;
+            state == 4;  // go to game loop
         }
-        else if (state == 2) {
+        else if (state == 4) {  // main game loop
             typed_ch = getch();
             total_typed++;
 
@@ -144,15 +185,15 @@ int main() {
         }
 
 
-        if (typed_ch == 27 || text_position == text_len) { // QUIT game (escape char)
+        if (typed_ch == 27 || text_position == text_len) {  // QUIT the game (escape char)
             state = 0;
         }
-        refresh();
+
+        refresh();      // draw the screen
+        usleep(30000);  // don't burn the cpu lol
     }
 
-
     endwin();
-
     return 0;
 }
 
@@ -192,7 +233,7 @@ int do_connect() {
     printf("Welcome to TypeRacer!\n\n");
 
     printf("Hostname (leave blank for localhost): ");
-    char *hostname = calloc(6, sizeof(char));  // see https://stackoverflow.com/questions/8724954/what-is-the-maximum-number-of-characters-for-a-host-name-in-unix
+    char *hostname = calloc(256, sizeof(char));  // see https://stackoverflow.com/questions/8724954/what-is-the-maximum-number-of-characters-for-a-host-name-in-unix
     fgets(hostname, 256, stdin);
     *strrchr(hostname, '\n') = 0;
     if (strlen(hostname) == 0) {
@@ -225,7 +266,7 @@ int do_connect() {
 int client_connect(char *host, char *port) {
     struct addrinfo *hints, *results;
 
-    hints = calloc(1,sizeof(struct addrinfo));
+    hints = calloc(1, sizeof(struct addrinfo));
     hints->ai_family = AF_INET;
     hints->ai_socktype = SOCK_STREAM;
     hints->ai_flags = AI_PASSIVE;
@@ -257,7 +298,7 @@ void setup_curses() {
     initscr();
     noecho();  // don't echo typed characters
     curs_set(FALSE);  // no cursor
-    // nodelay(stdscr, TRUE);  // non-blocking getch
+    nodelay(stdscr, TRUE);  // non-blocking getch
 
     // Initialize Colors
     if (has_colors() == FALSE) {

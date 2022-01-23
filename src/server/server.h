@@ -17,6 +17,8 @@
 #include <netdb.h>
 #include <sys/poll.h>
 
+#define MAX_PLAYERS 20
+
 int server_setup();
 int server_connect(int from_client);
 

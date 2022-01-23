@@ -57,6 +57,42 @@ int recv_n_bytes(int sockfd, uint8_t *buf, int n) {
 
 
 /**
+ * Receives a packet of type 0, 1, or 4
+ * 
+ * @param sockfd socket descriptor to receive from
+ * @return a packet of type 0, 1, or 4, or NULL on failure
+ */
+struct TRPacket * recv_types_014(int sockfd) {
+    struct TRPacket *ret = calloc(1, sizeof(struct TRPacket));
+    unsigned int data_size = 6;  // could probably just be 2
+    uint8_t *data = calloc(1, data_size);
+
+    int _read = recv_n_bytes(sockfd, data, 2);  // read the size of the packet only
+    data_size = ntohs(*((uint16_t *) data));  // conversion magic
+
+    data = realloc(data, data_size);
+    _read = recv_n_bytes(sockfd, data+2, data_size-2);  // read the rest
+
+    unsigned int type = ntohs(*((uint16_t *) (data+2)));  // get the type
+    if (type != 0 && type != 1 && type != 4) {  // wrong type
+        free(data);
+        return NULL;
+    }
+
+    ret->type = type;
+
+    if (type == 0 || type == 1) {
+        ret->uname_length = ntohs(*((uint16_t *) (data+4)));  // get the size
+        ret->username = calloc(1, ret->uname_length);
+        memcpy(ret->username, data+6, ret->uname_length);  // copy the username
+    }
+
+    free(data);
+    return ret;
+}
+
+
+/**
  * Sends a packet of type 0 through a socket. Checks
  * if packet type is correct before sending.
  * 

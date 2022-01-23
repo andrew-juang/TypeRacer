@@ -51,6 +51,7 @@ int recv_n_bytes(int sockfd, uint8_t *buf, int n);
 int send_packet(int sockfd, struct TRPacket *packet);
 struct TRPacket * recv_packet(int sockfd);
 void print_packet(struct TRPacket *packet);
+struct TRPacket * recv_types_014(int sockfd);
 
 int send_usr_pkt(int sockfd, struct TRPacket *packet);
 struct TRPacket * recv_usr_pkt(int sockfd);

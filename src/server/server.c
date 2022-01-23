@@ -13,8 +13,10 @@ int main() {
 
 	sd = server_setup(); // Binds to a port and listens for incoming connections
 
-	struct pollfd *fds = calloc(20, sizeof(struct pollfd));
+	// File Descriptors to poll()
+	struct pollfd *fds = calloc(MAX_PLAYERS, sizeof(struct pollfd));
 	int num_users = 0;
+
 
 	// add the listener socket to the pollfd array
 	fds[0].fd = sd;
@@ -25,11 +27,17 @@ int main() {
 	printf("[server] connected to host!\n");
 	fds[1].fd = to_client;
 	fds[1].events = POLLIN;
-	num_users++;
 
 	// Receive Username Packet
-	struct TRPacket *_username = recv_usr_pkt(to_client);
-	print_packet(_username);
+	struct TRPacket *_host_username = recv_usr_pkt(to_client);
+	print_packet(_host_username);
+
+	// List of connected clients' usernames
+	char **usernames = calloc(MAX_PLAYERS, sizeof(char *));
+	usernames[num_users] = _host_username->username;
+
+	free(_host_username);  // free recieved packet
+	num_users++;
 
 	// Tell the host that they're host
 	struct TRPacket *host_pkt = calloc(1, sizeof(struct TRPacket));
@@ -47,7 +55,6 @@ int main() {
 	not_host->host = 0;
 
 	while (1) {
-
 		int num_avail = poll(fds, num_users+1, -1);  // poll forever
 
 		int i;
@@ -66,26 +73,50 @@ int main() {
 				fds[num_users].fd = to_client;
 				fds[num_users].events = POLLIN;
 
-				// Receive Username Packet
+				// Receive username packet and process it
 				struct TRPacket *_username = recv_usr_pkt(to_client);
 				print_packet(_username);
+				usernames[num_users-1] = _username->username;  // add username to list
 
 				send_urhost_pkt(fds[num_users].fd, not_host);  // they're not host
 				send_typetext_pkt(fds[num_users].fd, text_packet);  // Sends Typetext Packet
+
+				struct TRPacket _user;  // Packet to send all usernames with
+				_user.type = 1;
+				int j;
+
+				// Send all connected usernames to the client
+				for (j = 0; j < num_users-1; j++) {
+					_user.uname_length = strlen(usernames[j]);
+					_user.username = usernames[j];
+
+					send_pjoined_pkt(to_client, &_user);
+				}
+
+				// Send other clients notification of this new client
+				for (j = 1; j < num_users; j++) {
+					send_pjoined_pkt(fds[j].fd, _username);
+				}
+
+				free(_username);  // free received packet
 			}
 
 			// Host Socket
 			if (i == 1 && fds[i].revents == POLLIN) {
-				struct TRPacket *rstart = recv_rstart_pkt(fds[1].fd); // Receive race start packet
-				print_packet(rstart);
+				struct TRPacket *_rstart = recv_rstart_pkt(fds[1].fd); // Receive race start packet
+				print_packet(_rstart);
+				free(_rstart);  // free received packet
+
+				// Race Start packet to send to all players
+				struct TRPacket *rstart_pkt = calloc(1, sizeof(struct TRPacket));
+				rstart_pkt->type = 4;
 
 				int j;
 				for (j = 1; j <= num_users; j++) { // Send game start to all users
-					struct TRPacket *rstart_pkt = calloc(1, sizeof(struct TRPacket));
-					rstart_pkt->type = 4;
-			        send_rstart_pkt(fds[j].fd, rstart_pkt); // Send race start packet
-					free(rstart_pkt);
+			        send_rstart_pkt(fds[j].fd, rstart_pkt);
 				}
+
+				free(rstart_pkt);
 
 				done++;
 				break;
@@ -96,13 +127,14 @@ int main() {
 	}
 
 	// clean up stuff before game
-	fds[0].fd = -1 * sd;  // stop polling listener socket
-	free(text_packet);
+	fds[0].fd = -1 * sd;      // stop polling listener socket
+	free(text_packet->text);  // free the text itself as it's calloc'd separately
+	free(text_packet);        // free the text packet
 	free(not_host);
 
 	// GAME LOOP
 	while (1) {
-		//
+		int num_avail = poll(fds, num_users+1, -1);  // poll forever
 	}
 
 	return 0;

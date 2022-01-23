@@ -11,9 +11,18 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <ncurses.h>
+#include <poll.h>
 
 #ifndef CLIENT_H
 #define CLIENT_H
+
+#define MAX_PLAYERS 20
+
+struct OtherPlayer {
+    char *username;
+    int progress;
+    int wpm;
+};
 
 int do_connect();
 char * get_send_usrname(int sockfd);
