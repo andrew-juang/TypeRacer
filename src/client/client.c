@@ -17,11 +17,11 @@ int main() {
     free(text_pkt);  // free the packet, but not the text
 
     if (am_host) { // if is host prompt start game
-        char line[10];
+        char line[2];
         printf("Start Game? [Y/N]: "); // Prompt
-    	fgets(line, 10, stdin); // Read from STDIN
+    	fgets(line, 2, stdin); // Read from STDIN
 
-        if (strcmp(line,"N\n")==0 || strcmp(line,"Y\n")!=0) return 0; // If N, end client
+        if (strcmp(line,"N")==0 || strcmp(line,"Y")!=0) return 0; // If N, end client
 
         struct TRPacket *rstart_pkt = calloc(1, sizeof(struct TRPacket));
         rstart_pkt->type = 4;
@@ -98,7 +98,7 @@ int main() {
             getmaxyx(stdscr, row, col);
 
             attron(COLOR_PAIR(5));
-            
+
             int _get_time_ret = clock_gettime(CLOCK_MONOTONIC, &curr_time);  // get the current time
 
             // Get the time elapsed in milliseconds

@@ -48,7 +48,7 @@ int main() {
 
 	while (1) {
 
-		int num_avail = poll(fds, num_users, -1);  // poll forever
+		int num_avail = poll(fds, num_users+1, -1);  // poll forever
 
 		int i;
 		int done = 0;
