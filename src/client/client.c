@@ -84,25 +84,28 @@ int main() {
                     break;
 
                 default:
+                    if (typed_ch != type_text[text_position]) num_errors++;
                     typed[text_position] = typed_ch;
                     text_position++;
             }
 
             int row, col;
             getmaxyx(stdscr, row, col);
-            if (typed[text_position-1] != type_text[text_position-1]) num_errors++;
+
+            accuracy = (100 * (total_typed-num_errors) / total_typed);  // Calculate accuracy
+
             attron(COLOR_PAIR(5));
-            mvprintw(0, col-16, "Accuracy: %d", (100 * (total_typed-num_errors)) / total_typed);
-            if ((int)((100 * (total_typed-num_errors)) / total_typed) < 100) {
-                mvprintw(0, col-4, " ");
-            }
+            mvprintw(0, col-16, "Accuracy: %d", accuracy);
+
+            if (accuracy < 100) mvprintw(0, col-4, " ");
 
             mvprintw(3, 0, "");
-            for (int i=0; i<strlen(typed); i++) {
-                if (typed[i] == type_text[i]) {
+            int i;
+            for (i = 0; i < strlen(typed); i++) {  // Write the user's typed text on the screen
+                if (typed[i] == type_text[i]) {    // Correctly typed character
                     attron(COLOR_PAIR(4));
                     printw("%c", type_text[i]);
-                } else {
+                } else {                           // Incorrectly typed character
                     attron(COLOR_PAIR(1));
                     printw("%c", type_text[i]);
                 }
