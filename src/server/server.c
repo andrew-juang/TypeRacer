@@ -77,6 +77,7 @@ int main() {
 			// Host Socket
 			if (i == 1 && fds[i].revents == POLLIN) {
 				struct TRPacket *rstart = recv_rstart_pkt(fds[1].fd); // Receive race start packet
+				print_packet(rstart);
 
 				int j;
 				for (j = 1; j <= num_users; j++) { // Send game start to all users

@@ -420,6 +420,9 @@ void print_packet(struct TRPacket *packet) {
                 packet->puname_length, packet->prog_username, packet->progress, packet->wpm);
         break;
 
+    case 6:
+        printf("host=%d", packet->host);
+
     default:
         break;
     }
