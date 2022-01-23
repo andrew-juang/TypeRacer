@@ -82,13 +82,13 @@ After every word (every time the user passes a white space in the original text)
 - Andrew: Does stuff
 - Dylan: Does stuff
 
-
 ## Timeline
 - [x] Proposal (1/12)
-- [ ] TypeRacer for single person (1/18)
-- [ ] Set up UI using ncurses (1/18)
-- [x] Complete protocol implementation (1/18)
-- [ ] Set up single room, multiple users (1/20)
-- [ ] Multiple rooms, multiple users (1/22)
-- [ ] Better Menus / GUI (Whatever remaining time we have)
+- [x] Complete protocol implementation (1/16)
+- [x] Client / Server initial connection (1/18)
+- [x] Set up UI using ncurses (1/18)
+- [ ] Finish game loop portion (1/22)
+- [ ] Set up single room, multiple users (1/22)
+- [ ] Better Menus / GUI / Text Selection (Whatever remaining time we have)
+
 
