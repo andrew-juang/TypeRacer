@@ -47,14 +47,7 @@ int main() {
     int state = 1;
 
     struct OtherPlayer other_players[MAX_PLAYERS];  // array of other players' info
-    int num_users = 1;  // Number of other connected players less one
-
-    other_players[0].username = "testing1";
-    other_players[0].wpm = 100;
-    other_players[0].progress = 10;
-    other_players[1].username = "asdf";
-    other_players[1].wpm = 420;
-    other_players[1].progress = 69;
+    int num_users = 0;  // Number of other connected players
 
     char *typed = calloc(1, strlen(type_text));  // Text typed by player
     int text_position = 0;  // Current position in text
@@ -154,7 +147,7 @@ int main() {
 
             mvchgat(curr_y, curr_x, 1, A_UNDERLINE, 0, NULL);
 
-            for (i = 0; i <= num_users && row-4-i > 7; i++) {
+            for (i = 0; i < num_users && row-4-i > 7; i++) {  // print other player's progress and wpm
                 mvprintw(row-4-i, (col-32)/2, "%s: %d WPM, %d Progress", other_players[i].username, other_players[i].wpm, other_players[i].progress);
             }
 
