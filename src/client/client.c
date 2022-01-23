@@ -63,6 +63,7 @@ int main() {
         }
         else if (state == 2) {
             typed_ch = getch();
+            total_typed++;
 
             switch (typed_ch) {
                 case ERR:  // nothing to getch
@@ -83,6 +84,12 @@ int main() {
                     typed[text_position] = typed_ch;
                     text_position++;
             }
+
+            int row, col;
+            getmaxyx(stdscr, row, col);
+            if (typed[text_position-1] != type_text[text_position-1]) num_errors++;
+            attron(COLOR_PAIR(5));
+            mvprintw(0, col-16, "Accuracy: %d%%", (100 * (total_typed-num_errors)) / total_typed);
 
             mvprintw(3, 0, "");
             for (int i=0; i<strlen(typed); i++) {
@@ -261,6 +268,7 @@ void draw_static_elements(char *username) {
     // Draw username text
     attron(COLOR_PAIR(3));
     mvprintw(row-2, 2, "%s", username);
+
 }
 
 
