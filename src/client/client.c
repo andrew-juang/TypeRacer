@@ -65,7 +65,6 @@ int main() {
 
                 case ' ':
                     send_rstart_pkt(sd, rstart_pkt); // Send race start packet
-                    free(rstart_pkt);
                     break;
             }
 
@@ -114,6 +113,9 @@ int main() {
         }
         else if (state == 3) {  // what used to be state 1
             fprintf(stderr, "state 3\n");
+
+            free(rstart_pkt);
+            
             clear();
 
             draw_static_elements(username);
