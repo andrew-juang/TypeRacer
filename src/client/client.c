@@ -47,7 +47,14 @@ int main() {
     int state = 1;
 
     struct OtherPlayer other_players[MAX_PLAYERS];  // array of other players' info
-    int num_users = 0;  // Number of other connected players less one
+    int num_users = 1;  // Number of other connected players less one
+
+    other_players[0].username = "testing1";
+    other_players[0].wpm = 100;
+    other_players[0].progress = 10;
+    other_players[1].username = "asdf";
+    other_players[1].wpm = 420;
+    other_players[1].progress = 69;
 
     char *typed = calloc(1, strlen(type_text));  // Text typed by player
     int text_position = 0;  // Current position in text
@@ -106,7 +113,7 @@ int main() {
                     total_typed++;
             }
 
-            int row, col;
+            int row, col;  // Terminal dimensions
             getmaxyx(stdscr, row, col);
 
             attron(COLOR_PAIR(5));
@@ -121,10 +128,11 @@ int main() {
 
             if (wpm < 0) mvprintw(0, col-26, "WPM: 0");
             else mvprintw(0, col-26, "WPM: %d", wpm);
+            if (wpm < 100) mvprintw(0, col-19, " ");
 
             accuracy = (100 * (total_typed-num_errors) / total_typed);  // Calculate accuracy
             mvprintw(0, col-16, "Accuracy: %d", accuracy);
-            if (accuracy < 100) mvprintw(0, col-4, " ");
+            if (accuracy < 100) mvprintw(0, col-4, " ");  // janky fix but ok
 
             mvprintw(3, 0, "");
             int i;
@@ -145,6 +153,10 @@ int main() {
             printw("%s", type_text+text_position);
 
             mvchgat(curr_y, curr_x, 1, A_UNDERLINE, 0, NULL);
+
+            for (i = 0; i <= num_users && row-4-i > 7; i++) {
+                mvprintw(row-4-i, (col-32)/2, "%s: %d WPM, %d Progress", other_players[i].username, other_players[i].wpm, other_players[i].progress);
+            }
 
             // game
             // IF SPACE SEND progress packet to server
