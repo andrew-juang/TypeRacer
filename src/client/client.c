@@ -6,9 +6,9 @@ int main() {
     signal(SIGINT, sighandler); // Handle Signals
     int sd = do_connect();  // Client connection
 
-    struct pollfd server_pollfd;
-    server_pollfd.events = POLLIN;
-    server_pollfd.fd = sd;
+    struct pollfd *server_pollfd = calloc(1, sizeof(struct pollfd));
+    server_pollfd->events = POLLIN;
+    server_pollfd->fd = sd;
 
     char *username = get_send_usrname(sd);  // Username prompt and processing
 
@@ -52,7 +52,7 @@ int main() {
         if (state == 1) {  // pregame - host
             int row, col;
             getmaxyx(stdscr, row, col);
-            mvprintw(0, (col-27)/2, "To start game, press space");
+            mvprintw(1, (col-27)/2, "To start game, press space");
 
             typed_ch = getch();  // check the keyboard buffer
             switch (typed_ch) {
@@ -68,7 +68,7 @@ int main() {
                     break;
             }
 
-            int recvd = poll(&server_pollfd, 1, 10);  // poll for 10ms
+            int recvd = poll(server_pollfd, 1, 50);  // poll for 50ms
             if (recvd) {
                 struct TRPacket *_recvd = recv_types_014(sd);
 
@@ -86,11 +86,11 @@ int main() {
         else if (state == 2) {  // pregame - not host
             int row, col;
             getmaxyx(stdscr, row, col);
-            mvprintw(0, (col-34)/2, "Waiting for host to start game...");
+            mvprintw(1, (col-34)/2, "Waiting for host to start game...");
 
             typed_ch = getch();  // check the keyboard buffer
 
-            int recvd = poll(&server_pollfd, 1, 10);  // poll for 10ms
+            int recvd = poll(server_pollfd, 1, 50);  // poll for 50ms
             if (recvd) {
                 struct TRPacket *_recvd = recv_types_014(sd);
 
@@ -106,6 +106,8 @@ int main() {
             }
         }
         else if (state == 3) {  // what used to be state 1
+            clear();
+
             draw_static_elements(username);
 
             // Draw the text to be typed
@@ -121,7 +123,6 @@ int main() {
         }
         else if (state == 4) {  // main game loop
             typed_ch = getch();
-            total_typed++;
 
             switch (typed_ch) {
                 case ERR:  // nothing to getch
@@ -136,12 +137,14 @@ int main() {
                     if (text_position == 0) break;
 
                     typed[--text_position] = 0;
+                    total_typed--;
                     break;
 
                 default:
                     if (typed_ch != type_text[text_position]) num_errors++;
                     typed[text_position] = typed_ch;
                     text_position++;
+                    total_typed++;
             }
 
             int row, col;
@@ -203,6 +206,7 @@ int main() {
     }
 
     endwin();
+    free(server_pollfd);
     return 0;
 }
 

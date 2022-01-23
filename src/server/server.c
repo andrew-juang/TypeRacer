@@ -100,6 +100,7 @@ int main() {
 				}
 
 				// Send other clients notification of this new client
+				_username->type = 1;
 				for (j = 1; j < num_users; j++) {
 					send_pjoined_pkt(fds[j].fd, _username);
 					print_packet(_username, 1);
