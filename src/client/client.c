@@ -28,6 +28,9 @@ int main() {
         send_rstart_pkt(sd, rstart_pkt); // Send race start packet
         free(rstart_pkt);
     }
+    else {
+        printf("Waiting for the host to start the game...\n");
+    }
 
     // Receive game start packet
     struct TRPacket *rstart = recv_rstart_pkt(sd);
