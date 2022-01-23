@@ -23,10 +23,10 @@ int main() {
 
     if (am_host) { // if is host prompt start game
         char line[2];
-        printf("Start Game? [Y/N]: "); // Prompt
+        printf("Press Y to Start Game: "); // Prompt
     	fgets(line, 2, stdin); // Read from STDIN
 
-        if (strcmp(line,"N")==0 || strcmp(line,"Y")!=0) return 0; // If N, end client
+        if (strcmp(line,"N")==0 || (strcmp(line,"Y")!=0 && strcmp(line,"y")!=0)) return 0; // If N, end client
 
         struct TRPacket *rstart_pkt = calloc(1, sizeof(struct TRPacket));
         rstart_pkt->type = 4;
@@ -161,7 +161,7 @@ int main() {
         }
 
 
-        if (typed_ch == 27 || text_position == text_len) {  // QUIT the game (escape char)
+        if (typed_ch == 27) {  // QUIT the game (escape char)
             state = 0;
         }
 
