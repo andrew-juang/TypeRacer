@@ -73,14 +73,17 @@ int main() {
                 struct TRPacket *_recvd = recv_types_014(sd);
 
                 if (_recvd->type == 4) {  // received game start packet
-                    state == 3;
+                    fprintf(stderr, "recieved game start!\n");
+                    state = 3;
                 }
                 else {  // recieved a new player's info
+                    fprintf(stderr, "new player or something idk bruh\n");
                     other_players[num_users].username = _recvd->username;
                     other_players[num_users].progress = 0;
                     other_players[num_users].wpm = 0;
                     num_users++;
                 }
+                fprintf(stderr, "state after poll: %d\n", state);
             }
         }
         else if (state == 2) {  // pregame - not host
@@ -95,17 +98,21 @@ int main() {
                 struct TRPacket *_recvd = recv_types_014(sd);
 
                 if (_recvd->type == 4) {  // received game start packet
-                    state == 3;
+                    fprintf(stderr, "recieved game start!\n");
+                    state = 3;
                 }
                 else {  // recieved a new player's info
+                    fprintf(stderr, "new player or something idk bruh\n");
                     other_players[num_users].username = _recvd->username;
                     other_players[num_users].progress = 0;
                     other_players[num_users].wpm = 0;
                     num_users++;
                 }
+                fprintf(stderr, "state after poll: %d\n", state);
             }
         }
         else if (state == 3) {  // what used to be state 1
+            fprintf(stderr, "state 3\n");
             clear();
 
             draw_static_elements(username);
@@ -119,7 +126,7 @@ int main() {
             int _get_time_ret = clock_gettime(CLOCK_MONOTONIC, &start_time);  // get the start time
             if (_get_time_ret == -1) wpm = -1;
 
-            state == 4;  // go to game loop
+            state = 4;  // go to game loop
         }
         else if (state == 4) {  // main game loop
             typed_ch = getch();
