@@ -89,7 +89,10 @@ int main() {
             getmaxyx(stdscr, row, col);
             if (typed[text_position-1] != type_text[text_position-1]) num_errors++;
             attron(COLOR_PAIR(5));
-            mvprintw(0, col-16, "Accuracy: %d%%", (100 * (total_typed-num_errors)) / total_typed);
+            mvprintw(0, col-16, "Accuracy: %d", (100 * (total_typed-num_errors)) / total_typed);
+            if ((int)((100 * (total_typed-num_errors)) / total_typed) < 100) {
+                mvprintw(0, col-4, " ");
+            }
 
             mvprintw(3, 0, "");
             for (int i=0; i<strlen(typed); i++) {

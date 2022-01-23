@@ -178,7 +178,7 @@ char * generate_text(){
         return 0;
     }
 
-	return text;
+	return remove_spaces(text);
 }
 
 
@@ -197,4 +197,27 @@ struct TRPacket * generate_text_packet() {
 	text_packet->text = text;
 
 	return text_packet;
+}
+
+
+/**
+ * Takes in a line and removes whitespace
+ *
+ * @param line pointer to a string
+ */
+char * remove_spaces(char * line) {
+    // Remove from beginning
+    while (*line == ' ' || *line == '\t') {
+        line++;
+    }
+
+    // Remove from end
+    char *end = line + strlen(line) - 1;
+    while(end > line && (*end == ' '||*end == '\t')) {
+        end--;
+    }
+
+    // Add terminating null
+    *(end + 1) = '\0';
+    return line;
 }

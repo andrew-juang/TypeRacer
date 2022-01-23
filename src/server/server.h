@@ -23,4 +23,6 @@ int server_connect(int from_client);
 char * generate_text();
 struct TRPacket * generate_text_packet();
 
+char * remove_spaces(char * line);
+
 #endif
