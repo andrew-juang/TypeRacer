@@ -3,6 +3,7 @@
 
 
 int main() {
+    signal(SIGINT, sighandler); // Handle Signals
     int sd = do_connect();  // Client connection
 
     struct pollfd server_pollfd;
@@ -51,7 +52,7 @@ int main() {
         if (state == 1) {  // pregame - host
             int row, col;
             getmaxyx(stdscr, row, col);
-            mvprintw(0, col/2, "To start game, Press Enter");
+            mvprintw(0, (col-27)/2, "To start game, press space");
 
             typed_ch = getch();  // check the keyboard buffer
             switch (typed_ch) {
@@ -59,7 +60,7 @@ int main() {
                     continue;
                     break;
 
-                case KEY_ENTER:;
+                case ' ':;
                     struct TRPacket *rstart_pkt = calloc(1, sizeof(struct TRPacket));
                     rstart_pkt->type = 4;
                     send_rstart_pkt(sd, rstart_pkt); // Send race start packet
@@ -83,7 +84,15 @@ int main() {
             }
         }
         else if (state == 2) {  // pregame - not host
-            struct TRPacket *_recvd = recv_types_014(sd);
+            int row, col;
+            getmaxyx(stdscr, row, col);
+            mvprintw(0, (col-34)/2, "Waiting for host to start game...");
+
+            typed_ch = getch();  // check the keyboard buffer
+
+            int recvd = poll(&server_pollfd, 1, 10);  // poll for 10ms
+            if (recvd) {
+                struct TRPacket *_recvd = recv_types_014(sd);
 
                 if (_recvd->type == 4) {  // received game start packet
                     state == 3;
@@ -94,6 +103,7 @@ int main() {
                     other_players[num_users].wpm = 0;
                     num_users++;
                 }
+            }
         }
         else if (state == 3) {  // what used to be state 1
             draw_static_elements(username);
@@ -354,4 +364,12 @@ void draw_dynamic_elements(char *type_text, char *user_typed, int wpm, int accur
 
     attron(COLOR_PAIR(3));
     mvprintw(3, 2, "%s", type_text);
+}
+
+
+static void sighandler(int signo) {
+    if (signo == SIGINT) {
+        endwin();
+        exit(EXIT_FAILURE);
+    }
 }

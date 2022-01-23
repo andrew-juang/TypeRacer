@@ -24,6 +24,8 @@ struct OtherPlayer {
     int wpm;
 };
 
+static void sighandler(int signo);
+
 int do_connect();
 char * get_send_usrname(int sockfd);
 int client_connect(char *host, char *port);
