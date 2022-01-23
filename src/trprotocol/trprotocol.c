@@ -432,8 +432,11 @@ struct TRPacket * recv_urhost_pkt(int sockfd) {
 /**
  * Prints a TRPacket packet
  * @param packet Packet to be printed
+ * @param rs Received (0), or sent (1)
  */
-void print_packet(struct TRPacket *packet) {
+void print_packet(struct TRPacket *packet, int rs) {
+    if (rs) printf("Sent ");
+    else printf("Received ");
     printf("TRPacket: type=%d ", packet->type);
 
     switch (packet->type)

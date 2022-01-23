@@ -30,7 +30,7 @@ int main() {
 
 	// Receive Username Packet
 	struct TRPacket *_host_username = recv_usr_pkt(to_client);
-	print_packet(_host_username);
+	print_packet(_host_username, 0);
 
 	// List of connected clients' usernames
 	char **usernames = calloc(MAX_PLAYERS, sizeof(char *));
@@ -44,10 +44,12 @@ int main() {
 	host_pkt->type = 6;
 	host_pkt->host = 1;
 	send_urhost_pkt(to_client, host_pkt);
+	print_packet(host_pkt, 1);
 	free(host_pkt);
 
 	// Send the text to the host
 	send_typetext_pkt(to_client, text_packet);
+	print_packet(text_packet, 1);
 
 	// Create a packet to tell non-host clients that they're not
 	struct TRPacket *not_host = calloc(1, sizeof(struct TRPacket));
@@ -75,11 +77,14 @@ int main() {
 
 				// Receive username packet and process it
 				struct TRPacket *_username = recv_usr_pkt(to_client);
-				print_packet(_username);
+				print_packet(_username, 0);
 				usernames[num_users-1] = _username->username;  // add username to list
 
 				send_urhost_pkt(fds[num_users].fd, not_host);  // they're not host
+				print_packet(not_host, 1);
+
 				send_typetext_pkt(fds[num_users].fd, text_packet);  // Sends Typetext Packet
+				print_packet(text_packet, 1);
 
 				struct TRPacket _user;  // Packet to send all usernames with
 				_user.type = 1;
@@ -91,11 +96,13 @@ int main() {
 					_user.username = usernames[j];
 
 					send_pjoined_pkt(to_client, &_user);
+					print_packet(&_user, 1);
 				}
 
 				// Send other clients notification of this new client
 				for (j = 1; j < num_users; j++) {
 					send_pjoined_pkt(fds[j].fd, _username);
+					print_packet(_username, 1);
 				}
 
 				free(_username);  // free received packet
@@ -104,7 +111,7 @@ int main() {
 			// Host Socket
 			if (i == 1 && fds[i].revents == POLLIN) {
 				struct TRPacket *_rstart = recv_rstart_pkt(fds[1].fd); // Receive race start packet
-				print_packet(_rstart);
+				print_packet(_rstart, 0);
 				free(_rstart);  // free received packet
 
 				// Race Start packet to send to all players
@@ -114,6 +121,7 @@ int main() {
 				int j;
 				for (j = 1; j <= num_users; j++) { // Send game start to all users
 			        send_rstart_pkt(fds[j].fd, rstart_pkt);
+					print_packet(rstart_pkt, 1);
 				}
 
 				free(rstart_pkt);
