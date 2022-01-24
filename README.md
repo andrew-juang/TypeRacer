@@ -33,7 +33,7 @@ make
 
 ## NOTABLE BUGS
 - Progress and WPM updates are wonky AT THE END OF THE GAME
-- random free() errors in server may occur
+- random free() errors in server may occur which causes client to crash
 - client doesn't refresh until keyboard input
 - client doesn't stop you from typing when you finish the game
 - we have not yet implemented countdown
