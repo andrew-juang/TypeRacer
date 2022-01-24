@@ -173,7 +173,7 @@ int main() {
                 update.type = 5;
                 update.puname_length = strlen(username);
                 update.prog_username = username;
-                update.progress = text_position / text_len;
+                update.progress = 100 * text_position / text_len;
                 update.wpm = (wpm >= 0) ? wpm : (-1 * wpm);  // lol
 
                 send_progress_pkt(sd, &update);
