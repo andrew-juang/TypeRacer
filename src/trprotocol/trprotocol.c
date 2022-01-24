@@ -369,6 +369,78 @@ struct TRPacket * recv_rstart_pkt(int sockfd) {
 
 
 /**
+ * Sends a packet of type 5 through a socket. Checks
+ * if packet type is correct before sending.
+ * 
+ * @param sockfd socket descriptor
+ * @param packet packet to send
+ * @return 0 on success, other values on failure
+ */
+int send_progress_pkt(int sockfd, struct TRPacket *packet) {
+    if (packet->type != 5) {  // wrong type
+        return -1;
+    }
+
+    unsigned int data_size = 10 + packet->puname_length;
+    uint8_t *data = malloc(data_size);
+
+    uint16_t _data_size = htons(data_size);
+    uint16_t _packet_type = htons(packet->type);
+    uint16_t _packet_puname_length = htons(packet->puname_length);
+    uint16_t _packet_progress = htons(packet->progress);
+    uint16_t _packet_wpm = htons(packet->wpm);
+
+    memcpy(data, &_data_size, 2);                                   // size of packet
+    memcpy(data+2, &_packet_type, 2);                               // packet type
+    memcpy(data+4, &_packet_puname_length, 2);                      // length of username
+    memcpy(data+6, &_packet_progress, 2);                           // Progress
+    memcpy(data+8, &_packet_wpm, 2);                                // WPM
+    memcpy(data+10, packet->prog_username, packet->puname_length);  // username
+
+    int sent = sendall(sockfd, data, &data_size);
+    free(data);
+
+    return 0;
+}
+
+
+/**
+ * Recieves a packet of type 6. Allocates memory for packet
+ * and returns a pointer to it.
+ *
+ * @return pointer to recieved packet
+ */
+struct TRPacket * recv_progress_pkt(int sockfd) {
+    struct TRPacket *ret = calloc(1, sizeof(struct TRPacket));
+    unsigned int data_size = 2;  // just enough for the data size
+    uint8_t *data = calloc(1, data_size);
+
+    int _read = recv_n_bytes(sockfd, data, 2);  // read the size of the packet only
+    data_size = ntohs(*((uint16_t *) data));  // conversion magic
+
+    data = realloc(data, data_size);
+    _read = recv_n_bytes(sockfd, data+2, data_size-2);  // read the rest
+
+    unsigned int type = ntohs(*((uint16_t *) (data+2)));  // get the type
+    if (type != 5) {  // wrong type
+        free(data);
+        return NULL;
+    }
+
+    ret->type = type;
+    ret->puname_length = ntohs(*((uint16_t *) (data+4)));
+    ret->progress = ntohs(*((uint16_t *) (data+6)));
+    ret->wpm = ntohs(*((uint16_t *) (data+8)));
+
+    ret->prog_username = calloc(1, ret->uname_length);
+    memcpy(ret->prog_username, data+10, ret->puname_length);  // copy the username
+
+    free(data);
+    return ret;
+}
+
+
+/**
  * Sends a packet of type 6 through a socket. Checks
  * if packet type is correct before sending.
  * 

@@ -166,13 +166,19 @@ int main() {
                 mvprintw(row-4-i, (col-32)/2, "%s: %d WPM, %d Progress", other_players[i].username, other_players[i].wpm, other_players[i].progress);
             }
 
-            // game
             // IF SPACE SEND progress packet to server
+            if (type_text[text_position] == ' ') {
+                struct TRPacket update;
+                update.type = 5;
+                update.puname_length = strlen(username);
+                update.prog_username = username;
+                update.progress = text_position / text_len;
+                update.wpm = (wpm >= 0) ? wpm : (-1 * wpm);  // lol
 
+                send_progress_pkt(sd, &update);
+            }
 
             // RECEIVE progress of other clients from server
-            // SLEEP
-            // REDRAW screen based on keyboard input
         }
 
 

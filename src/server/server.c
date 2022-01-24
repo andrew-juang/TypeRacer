@@ -141,6 +141,25 @@ int main() {
 	// GAME LOOP
 	while (1) {
 		int num_avail = poll(fds, num_users+1, -1);  // poll forever
+
+		int i;
+		for (i = 1; i <= num_users; i++) {
+			if (fds[i].revents == POLLIN) {
+				struct TRPacket *_progress = recv_progress_pkt(fds[i].fd);
+
+				print_packet(_progress, 0);
+
+				// int j;
+				// for (j = 1; j <= num_users; j++) {  // loop through fds
+				// 	if (i == j) continue;  // if same fd, skip
+				//
+				// 	send_progress_pkt(fds[j].fd, _progress);
+				// }
+
+				free(_progress->prog_username);
+				free(_progress);
+			}
+		}
 	}
 
 	return 0;
