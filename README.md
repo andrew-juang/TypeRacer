@@ -29,6 +29,12 @@ make
 `make server` and `make client` in separate windows
 
 * Press escape if you want to escape the client and ctrl-c if you want to stop the server
+* You will have to rerun the server if you want a new lobby 
+
+## NOTABLE BUGS
+- random free() errors in server
+- client doesn't refresh until keyboard input
+- client doesn't stop you from typing when you finish the game
 
 ## Technical Design
 ### Client-server communication protocol
