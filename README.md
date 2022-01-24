@@ -11,6 +11,9 @@ TypeRacer is a multiplayer typing test racing game. You have to type a text as f
   - On debian: `sudo apt install libncurses5-dev libncursesw5-dev`
   - On other systems google: "install ncurses (platform)" and follow instructions that look somewhat trustworthy
 
+### Other Requirements
+ - Your compiler (gcc) must support C11 or higher
+
 ### Run the Game
 * Clone the Repository
 ```
