@@ -32,6 +32,7 @@ make
 * You will have to rerun the server if you want a new lobby 
 
 ## NOTABLE BUGS
+- Progress and WPM updates are wonky, so ignore them if they don't seem correct
 - random free() errors in server
 - client doesn't refresh until keyboard input
 - client doesn't stop you from typing when you finish the game
