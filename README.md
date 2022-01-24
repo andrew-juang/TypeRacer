@@ -32,10 +32,10 @@ make
 * You will have to rerun the server if you want a new lobby 
 
 ## NOTABLE BUGS
-- Progress and WPM updates are wonky AT THE END OF THE GAME
+- Progress and WPM updates are sometimes not accurate
 - random free() errors in server may occur which causes client to crash
 - client doesn't refresh until keyboard input
-- client doesn't stop you from typing when you finish the game
+- floating point errors might occur
 - we have not yet implemented countdown
 
 ## Technical Design
