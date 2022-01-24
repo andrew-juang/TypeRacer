@@ -175,6 +175,10 @@ int server_setup() {
 	getaddrinfo(NULL, "9001", hints, &results);
 
 	int sd = socket(results->ai_family, results->ai_socktype, results->ai_protocol);
+
+	int flag = 1;
+	setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(flag));
+	
 	int bresult = bind(sd, results->ai_addr, results->ai_addrlen);
 	if (bresult) {
 		printf("[server] couldn't bind to socket\n");
