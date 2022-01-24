@@ -34,7 +34,7 @@ make
 * Press escape if you want to escape the client and ctrl-c if you want to stop the server
 * You will have to rerun the server if you want a new lobby 
 
-## Somewhat Notable Bugs and/or Problems
+## Somewhat Notable Bugs and/or Problems (SOME OF these bugs may be resolved but we are leaving these here for now)
 - random double free() errors in server may occur which causes client to crash
   - Restart the server and user ctrl-c to exit the client if this occurs
 - Calculation of WPM may not match other typing tests, as we're not exactly sure what values to use to calculate WPM from errors and number of typed characters
