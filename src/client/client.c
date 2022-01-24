@@ -133,7 +133,7 @@ int main() {
             long time_milli_diff = ((curr_time.tv_sec - start_time.tv_sec) * 1000) +
                                     ((curr_time.tv_nsec - start_time.tv_nsec) / 1000000.0);
 
-            wpm = (int) (((total_typed / 5.0) - num_errors) / (time_milli_diff / 60000.0));
+            wpm = (int) (((total_typed / 3.5) - (num_errors / 1.5)) / (time_milli_diff / 60000.0));
 
             if (wpm < 0) mvprintw(0, col-26, "WPM: 0");
             else mvprintw(0, col-26, "WPM: %d", wpm);
