@@ -151,7 +151,7 @@ int main() {
 				int j;
 				for (j = 1; j <= num_users; j++) {  // loop through fds
 					if (i == j) continue;  // if same fd, skip
-				
+
 					send_progress_pkt(fds[j].fd, _progress);
 					print_packet(_progress, 1);
 				}
@@ -172,7 +172,7 @@ int server_setup() {
 	hints->ai_family = AF_INET;
 	hints->ai_socktype = SOCK_STREAM;
 	hints->ai_flags = AI_PASSIVE;
-	getaddrinfo("localhost", "9001", hints, &results);
+	getaddrinfo(NULL, "9001", hints, &results);
 
 	int sd = socket(results->ai_family, results->ai_socktype, results->ai_protocol);
 	int bresult = bind(sd, results->ai_addr, results->ai_addrlen);
