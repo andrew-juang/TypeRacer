@@ -36,6 +36,7 @@ make
 - random free() errors in server may occur
 - client doesn't refresh until keyboard input
 - client doesn't stop you from typing when you finish the game
+- we have not yet implemented countdown
 
 ## Technical Design
 ### Client-server communication protocol
@@ -95,6 +96,6 @@ The client is responsible for connecting to the server, recieving the text to ty
 - [x] Complete protocol implementation (1/16)
 - [x] Client / Server initial connection (1/18)
 - [x] Set up UI using ncurses (1/18)
-- [ ] Finish game loop portion (1/22)
-- [ ] Set up single room, multiple users (1/22)
+- [x] Finish game loop portion (1/22)
+- [x] Set up single room, multiple users (1/22)
 - [ ] Better Menus / GUI / Text Selection (Whatever remaining time we have)
