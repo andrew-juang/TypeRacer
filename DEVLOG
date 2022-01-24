@@ -1,3 +1,53 @@
+Author: Andrew Juang <andrewjuang01@gmail.com>
+Date:   Sat Jan 22 23:59:54 2022 
+- Updated README and moved proposal
+
+Author: Andrew <andrewjuang01@gmail.com>
+Date:   Sat Jan 22 21:30:47 2022 
+- Started implementation of typing
+- Implemented red for wrong char
+- Client quits when you reach end
+- Fixed generate_text function
+- Started implementing accuracy
+- Strip whitespace from text + bandaid fix to extra 0 in wpm ncurses
+
+Author: Dylan Hu
+Date:   Sat Jan 22 16:53:27 2022 -0500
+- Client handling of backspaces; setup for client WPM and accuracy calculations
+- Client no longer changes type_text pointer
+- Client now draws underline under next character
+
+Author: Andrew <andrewjuang01@gmail.com>
+Date:   Thu Jan 20 20:18:15 2022 
+- Implemented rstart packet sends
+- Finalized client/server connection
+  - Sends out race start packets to all clients once host starts game
+  - Host gets prompted to start game
+
+Author: Andrew <andrewjuang01@gmail.com>
+Date:   Thu Jan 20 10:50:38 2022 
+- added comments outlining server/client connection
+
+Author: Dylan Hu
+Date:   Thu Jan 20 10:47:19 2022 
+- server now tells hosts/not hosts who they are
+- fixed host packet
+- added urhost packet type
+- server race start packet
+
+Author: Aaron Visser <avisser20@stuy.edu>
+Date:   Wed Jan 19 10:21:51 2022
+- update text in generate_text function
+
+Author: Dylan Hu 
+Date:   Tue Jan 18 13:46:35 2022 
+- free hostname and port input
+- frees username packet after sending
+- moved username prompt and sending to another function
+- moved connection process to a different function
+- added user selection of hostname/port
+- shows the username on the bottom during game
+
 Author: Dylan
 Date:   1/17/22 05:21 pm
  - Finished implemented send/recv functions for packet types 3, 4, 5
