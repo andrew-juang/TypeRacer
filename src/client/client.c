@@ -195,8 +195,74 @@ int main() {
                 free(recv_update->prog_username);
                 free(recv_update);
             }
-        }
 
+            if (text_position == text_len) {
+                // Send last update
+                struct TRPacket update;
+                update.type = 5;
+                update.puname_length = strlen(username);
+                update.prog_username = username;
+                update.progress = 100 * (((double ) text_position) / text_len);
+                update.wpm = (wpm >= 0) ? wpm : (-1 * wpm);  // lol
+                send_progress_pkt(sd, &update);
+
+                state = 3;  // it's over!
+            }
+        }
+        else if (state == 3) {  // after game
+            typed_ch = getch();
+
+            // RECEIVE progress of other clients from server
+            int i;
+            int recvd = poll(server_pollfd, 1, 20);  // poll the server for 20ms
+            if (recvd) {
+                struct TRPacket *recv_update = recv_progress_pkt(sd);
+
+                for (i = 0; i < num_users; i++) {
+                    if (strcmp(recv_update->username, other_players[i].username) == 0) {
+                        other_players[i].progress = recv_update->progress;
+                        other_players[i].wpm = recv_update->wpm;
+                        break;
+                    }
+                }
+
+                free(recv_update->prog_username);
+                free(recv_update);
+            }
+
+            int row, col;  // Terminal dimensions
+            getmaxyx(stdscr, row, col);
+
+            attron(COLOR_PAIR(5));
+            mvprintw(1, (col-34)/2, "Finished! Press escape to exit...");
+            refresh();
+
+            if (wpm < 0) mvprintw(0, col-26, "WPM: 0");
+            else mvprintw(0, col-26, "WPM: %d", wpm);
+            if (wpm < 100) mvprintw(0, col-19, " ");
+
+            accuracy = (100 * (total_typed-num_errors) / total_typed);  // Calculate accuracy
+            mvprintw(0, col-16, "Accuracy: %d", accuracy);
+            if (accuracy < 100) mvprintw(0, col-4, " ");  // janky fix but ok
+
+            mvprintw(3, 0, "");
+            for (i = 0; i < strlen(typed); i++) {  // Write the user's typed text on the screen
+                if (typed[i] == type_text[i]) {    // Correctly typed character
+                    attron(COLOR_PAIR(4));
+                    printw("%c", type_text[i]);
+                } else {                           // Incorrectly typed character
+                    attron(COLOR_PAIR(1));
+                    printw("%c", type_text[i]);
+                }
+            }
+
+            attron(COLOR_PAIR(3));
+            printw("%s", type_text+text_position);
+
+            for (i = 0; i < num_users && row-4-i > 7; i++) {  // print other player's progress and wpm
+                mvprintw(row-4-i, (col-32)/2, "%s: %d WPM, %d Progress", other_players[i].username, other_players[i].wpm, other_players[i].progress);
+            }
+        }
 
         if (typed_ch == 27) {  // QUIT the game (escape char)
             state = 0;
