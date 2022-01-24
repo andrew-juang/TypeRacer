@@ -146,15 +146,15 @@ int main() {
 		for (i = 1; i <= num_users; i++) {
 			if (fds[i].revents == POLLIN) {
 				struct TRPacket *_progress = recv_progress_pkt(fds[i].fd);
-
 				print_packet(_progress, 0);
 
-				// int j;
-				// for (j = 1; j <= num_users; j++) {  // loop through fds
-				// 	if (i == j) continue;  // if same fd, skip
-				//
-				// 	send_progress_pkt(fds[j].fd, _progress);
-				// }
+				int j;
+				for (j = 1; j <= num_users; j++) {  // loop through fds
+					if (i == j) continue;  // if same fd, skip
+				
+					send_progress_pkt(fds[j].fd, _progress);
+					print_packet(_progress, 1);
+				}
 
 				free(_progress->prog_username);
 				free(_progress);

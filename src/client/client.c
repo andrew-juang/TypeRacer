@@ -93,6 +93,7 @@ int main() {
             int _get_time_ret = clock_gettime(CLOCK_MONOTONIC, &start_time);  // get the start time
             if (_get_time_ret == -1) wpm = -1;
 
+            refresh();
             state++;  // go to game loop
         }
         else if (state == 2) {  // main game loop
@@ -179,6 +180,21 @@ int main() {
             }
 
             // RECEIVE progress of other clients from server
+            int recvd = poll(server_pollfd, 1, 15);  // poll the server for 15ms
+            if (recvd) {
+                struct TRPacket *recv_update = recv_progress_pkt(sd);
+
+                for (i = 0; i < num_users; i++) {
+                    if (strcmp(recv_update->username, other_players[i].username) == 0) {
+                        other_players[i].progress = recv_update->progress;
+                        other_players[i].wpm = recv_update->wpm;
+                        break;
+                    }
+                }
+
+                free(recv_update->prog_username);
+                free(recv_update);
+            }
         }
 
 
@@ -187,7 +203,7 @@ int main() {
         }
 
         refresh();      // draw the screen
-        usleep(30000);  // don't burn the cpu lol
+        usleep(10000);  // don't burn the cpu lol
     }
 
     endwin();
