@@ -15,7 +15,6 @@ Date:   Sun Jan 23 21:33:02 2022
     Server:
     * Receives progress packets, doesn't do much with them yet...
 - Client/Server transfer of usernames works
-
     
 Author: Dylan Hu
 Date:   Sun Jan 23 16:14:59 2022 
