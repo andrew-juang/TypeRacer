@@ -1,3 +1,45 @@
+Author: Andrew <andrewjuang01@gmail.com>
+Date:   Sun Jan 23 21:56:17 2022 
+- Allow clients from different computers to connect
+
+Author: Dylan Hu 
+Date:   Sun Jan 23 21:33:02 2022 
+- Client processing of received progress packets
+- Implemented send/recv for packet type 5; client/server progress packets
+    TRProtocol:
+    * Implemented send and recv functions for packet type 5
+    
+    Client:
+    * Sends progress packets with WPM and progress to the server
+    
+    Server:
+    * Receives progress packets, doesn't do much with them yet...
+- Client/Server transfer of usernames works
+
+    
+Author: Dylan Hu
+Date:   Sun Jan 23 16:14:59 2022 
+- Tried implementing space to start game 
+- Added player handling for clients / server
+- Client shows progress from OtherPlayer struct
+
+Author: Andrew <andrewjuang01@gmail.com>
+Date:   Sun Jan 23 12:43:14 2022 
+- Fixed bug where host can't start single player game
+
+Author: Dylan Hu 
+Date:   Sun Jan 23 11:59:46 2022 
+- Added print_packet type 6; Server prints out recieved rstart packet
+- Added WPM calculation
+    - Uses `struct timespec` to get the start time and the current time
+    - Calculates the time difference in milliseconds
+    - Calculates the WPM using calculated time difference in minutes
+- Fixed accuracy calculation, cleaned up
+    - Moved error calculation to when the user types so it doesn't dock errors every time the player backspaces into an incorrectly typed character
+    - Moved accuracy calculation to separate line
+    - Added comments for typed text printing
+- Added waiting for host message for non-hosts
+
 Author: Andrew Juang <andrewjuang01@gmail.com>
 Date:   Sat Jan 22 23:59:54 2022 
 - Updated README and moved proposal
