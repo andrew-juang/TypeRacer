@@ -121,6 +121,7 @@ int main() {
                     typed[text_position] = typed_ch;
                     text_position++;
                     total_typed++;
+                    break;
             }
 
             int row, col;  // Terminal dimensions
@@ -140,7 +141,7 @@ int main() {
             else mvprintw(0, col-26, "WPM: %d", wpm);
             if (wpm < 100) mvprintw(0, col-19, " ");
 
-            accuracy = (100 * (total_typed-num_errors) / total_typed);  // Calculate accuracy
+            accuracy = (100 * (total_typed-num_errors) / (total_typed+1));  // Calculate accuracy
             mvprintw(0, col-16, "Accuracy: %d", accuracy);
             if (accuracy < 100) mvprintw(0, col-4, " ");  // janky fix but ok
 
