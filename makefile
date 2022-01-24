@@ -23,23 +23,23 @@ all: SERVER CLIENT
 
 SERVER: $(SERVER_OBJS) $(PROTO_OBJS)
 	mkdir -p $(BIN)
-	gcc -o $(SERVER) $^
+	gcc -g -o $(SERVER) $^
 
 CLIENT: $(CLIENT_OBJS) $(PROTO_OBJS)
 	mkdir -p $(BIN)
-	gcc -o $(CLIENT) $^ $(LINKS)
+	gcc -g -o $(CLIENT) $^ $(LINKS)
 
 $(OBJ)/server/%.o: $(SRC)/server/%.c $(SERVER_DEPS) $(PROTO_DEPS)
 	mkdir -p $(OBJ)/server
-	gcc -o $@ -c $<
+	gcc -g -o $@ -c $<
 
 $(OBJ)/client/%.o: $(SRC)/client/%.c $(CLIENT_DEPS) $(PROTO_DEPS)
 	mkdir -p $(OBJ)/client
-	gcc -o $@ -c $<
+	gcc -g -o $@ -c $<
 
 $(OBJ)/trprotocol/%.o: $(SRC)/trprotocol/%.c $(PROTO_DEPS)
 	mkdir -p $(OBJ)/trprotocol
-	gcc -o $@ -c $<
+	gcc -g -o $@ -c $<
 
 server: $(SERVER)
 	$(SERVER)
