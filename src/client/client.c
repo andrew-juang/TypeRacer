@@ -76,6 +76,7 @@ int main() {
     int wpm = 0;
     int accuracy = 100;
     int num_errors = 0;
+    int finish_pos = 1;
 
     // Main Loop
     while (state) {
@@ -192,6 +193,8 @@ int main() {
                     }
                 }
 
+                if (recv_update->progress == 100) finish_pos++;
+
                 free(recv_update->prog_username);
                 free(recv_update);
             }
@@ -234,7 +237,7 @@ int main() {
             getmaxyx(stdscr, row, col);
 
             attron(COLOR_PAIR(5));
-            mvprintw(1, (col-34)/2, "Finished! Press escape to exit...");
+            mvprintw(1, (col-60)/2, "Finished! You were P%d! Press escape or ctrl-c to exit...", finish_pos);
             refresh();
 
             if (wpm < 0) mvprintw(0, col-26, "WPM: 0");
