@@ -37,17 +37,32 @@ int main() {
         printf("Waiting for the host to start the game...\n");
     }
 
-    poll(server_pollfd, 1, -1);
-    struct TRPacket *rstart = recv_rstart_pkt(sd);
-    free(rstart);
+    struct OtherPlayer other_players[MAX_PLAYERS];  // array of other players' info
+    int num_users = 0;  // Number of other connected players
+
+    while (1) {
+        int recvd = poll(server_pollfd, 1, -1);  // wait for server to send stuff over
+        if (recvd) {
+            struct TRPacket *_recvd = recv_types_014(sd);
+
+            if (_recvd->type == 4) {  // received game start packet
+                free(_recvd);
+                break;
+            }
+            else {  // recieved a new player's info
+                other_players[num_users].username = _recvd->username;
+                other_players[num_users].progress = 0;
+                other_players[num_users].wpm = 0;
+                num_users++;
+                free(_recvd);
+            }
+        }
+    }
 
     setup_curses();
     refresh();
 
     int state = 1;
-
-    struct OtherPlayer other_players[MAX_PLAYERS];  // array of other players' info
-    int num_users = 0;  // Number of other connected players
 
     char *typed = calloc(1, strlen(type_text));  // Text typed by player
     int text_position = 0;  // Current position in text

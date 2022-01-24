@@ -86,26 +86,6 @@ int main() {
 				send_typetext_pkt(fds[num_users].fd, text_packet);  // Sends Typetext Packet
 				print_packet(text_packet, 1);
 
-				struct TRPacket _user;  // Packet to send all usernames with
-				_user.type = 1;
-				int j;
-
-				// Send all connected usernames to the client
-				// for (j = 0; j < num_users-1; j++) {
-				// 	_user.uname_length = strlen(usernames[j]);
-				// 	_user.username = usernames[j];
-
-				// 	send_pjoined_pkt(to_client, &_user);
-				// 	print_packet(&_user, 1);
-				// }
-
-				// Send other clients notification of this new client
-				// _username->type = 1;
-				// for (j = 1; j < num_users; j++) {
-				// 	send_pjoined_pkt(fds[j].fd, _username);
-				// 	print_packet(_username, 1);
-				// }
-
 				free(_username);  // free received packet
 			}
 
@@ -115,11 +95,28 @@ int main() {
 				print_packet(_rstart, 0);
 				free(_rstart);  // free received packet
 
+				// Reusable packet for sending clients' usernames
+				struct TRPacket pjoined;
+				pjoined.type = 1;
+
+				int j;
+				for (j = 1; j <= num_users; j++) {  // loop through fds
+					int k;
+					for (k = 0; k < num_users; k++) {  // loop through usernames
+						if (j-1 == k) continue;  // if the fd's username == current username, skip
+
+						pjoined.uname_length = strlen(usernames[k]);
+						pjoined.username = usernames[k];
+
+						send_pjoined_pkt(fds[j].fd, &pjoined);
+						print_packet(&pjoined, 1);
+					}
+				}
+
 				// Race Start packet to send to all players
 				struct TRPacket *rstart_pkt = calloc(1, sizeof(struct TRPacket));
 				rstart_pkt->type = 4;
 
-				int j;
 				for (j = 1; j <= num_users; j++) { // Send game start to all users
 			        send_rstart_pkt(fds[j].fd, rstart_pkt);
 					print_packet(rstart_pkt, 1);
