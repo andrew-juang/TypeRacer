@@ -134,8 +134,8 @@ int main() {
 
 	// clean up stuff before game
 	fds[0].fd = -1 * sd;      // stop polling listener socket
-	free(text_packet->text);  // free the text itself as it's calloc'd separately
-	// free(text_packet);        // free the text packet
+	// free(text_packet->text);  // free the text itself as it's calloc'd separately
+	free(text_packet);        // free the text packet
 	free(not_host);
 
 	// GAME LOOP
